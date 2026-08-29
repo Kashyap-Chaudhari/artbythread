@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:admin": "npm --prefix admin-app run dev",
     "build": "next build",
+    "build:admin": "npm --prefix admin-app run build",
     "start": "next start",
     "lint": "eslint"
   },
