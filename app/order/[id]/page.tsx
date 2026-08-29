@@ -1,10 +1,10 @@
-import React from "react";
-import { Metadata } from "next";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
-import { initialProducts, initialSiteSettings } from "@/lib/data";
+import { useParams } from "next/navigation";
+import { useStore } from "@/lib/store";
 import { formatPrice, generateWhatsAppUrl } from "@/lib/utils";
 import {
   Sparkles,
@@ -17,126 +17,161 @@ import {
   Palette,
   Package,
   ArrowLeft,
-  ShieldCheck,
+  Phone,
   Calendar,
+  ShieldCheck,
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { Footer } from "@/components/layout/Footer";
 
-interface OrderPageProps {
-  params: Promise<{ id: string }>;
+interface OrderData {
+  id: string;
+  order_id: string;
+  customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  preferred_channel?: string;
+  product_name: string;
+  product_photo_url?: string;
+  quantity: number;
+  size_variant?: string;
+  customization_note?: string;
+  delivery_city?: string;
+  status: string;
+  quoted_price?: number | null;
+  admin_notes?: string;
+  shipping_carrier?: string;
+  tracking_number?: string;
+  created_at: string;
 }
 
-// Helper to fetch order from Supabase or generate deterministic fallback
-async function getOrderDetails(orderIdOrUuid: string) {
-  const cleanId = decodeURIComponent(orderIdOrUuid).trim();
+export default function OrderDetailPage() {
+  const params = useParams();
+  const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const orderId = decodeURIComponent(rawId || "").trim();
 
-  if (isSupabaseConfigured && supabase) {
+  const { settings } = useStore();
+  const [order, setOrder] = useState<OrderData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!orderId) return;
+
+    let matchedOrder: OrderData | null = null;
+
+    // 1. First priority: Check local storage on customer's device for exact matching order
     try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .or(`order_id.eq.${cleanId},id.eq.${cleanId}`)
-        .single();
-
-      if (data && !error) {
-        return {
-          id: data.id,
-          order_id: data.order_id || cleanId,
-          customer_name: data.customer_name || "Valued Customer",
-          customer_phone: data.customer_phone || "",
-          customer_email: data.customer_email || "",
-          preferred_channel: data.preferred_channel || "whatsapp",
-          product_name: data.product_name || "Handmade Creation",
-          product_photo_url: data.product_photo_url || "/products/orchid-bouquet-never-fades.jpg",
-          quantity: data.quantity || 1,
-          size_variant: data.size_variant || "Standard Size",
-          customization_note: data.customization_note || data.customization_details || "",
-          delivery_city: data.delivery_city || "India",
-          status: (data.status || "new").toLowerCase(),
-          quoted_price: data.quoted_price || null,
-          admin_notes: data.admin_notes || "",
-          shipping_carrier: data.shipping_carrier || "",
-          tracking_number: data.tracking_number || "",
-          created_at: data.created_at || new Date().toISOString(),
-        };
+      const saved = localStorage.getItem("artbythread_customer_orders");
+      if (saved) {
+        const ordersList = JSON.parse(saved);
+        if (Array.isArray(ordersList)) {
+          const found = ordersList.find(
+            (o: any) =>
+              (o.order_id && o.order_id.toUpperCase() === orderId.toUpperCase()) ||
+              (o.id && o.id.toUpperCase() === orderId.toUpperCase())
+          );
+          if (found) {
+            matchedOrder = {
+              id: found.order_id,
+              order_id: found.order_id,
+              customer_name: found.customer_name || "Valued Customer",
+              customer_phone: found.customer_phone || "",
+              customer_email: found.customer_email || "",
+              preferred_channel: found.preferred_channel || "whatsapp",
+              product_name: found.product_name || "Handcrafted Creation",
+              product_photo_url: found.product_photo_url || "/products/handkerchief-iloveu-embroidery.jpg",
+              quantity: found.quantity || 1,
+              size_variant: found.size_variant || "Standard Size",
+              customization_note: found.customization_note || "",
+              delivery_city: found.delivery_city || "India",
+              status: found.status || "new",
+              quoted_price: found.product_price || null,
+              created_at: found.created_at || new Date().toISOString(),
+            };
+          }
+        }
       }
     } catch (e) {
-      console.warn("[ORDER FETCH FROM DB WARNING]", e);
+      console.warn("[LOCAL STORAGE ORDER LOOKUP FAILED]", e);
     }
-  }
 
-  // Graceful fallback for mock / demo / newly created orders
-  const sampleProduct = initialProducts[0];
-  return {
-    id: cleanId,
-    order_id: cleanId,
-    customer_name: "Art Lover",
-    customer_phone: "+91 98765 43210",
-    customer_email: "customer@example.com",
-    preferred_channel: "whatsapp",
-    product_name: sampleProduct?.name || "Personalized Embroidered Handkerchief",
-    product_photo_url: sampleProduct?.images?.[0]?.url || "/products/handkerchief-iloveu-embroidery.jpg",
-    quantity: 1,
-    size_variant: "Standard Size",
-    customization_note: "Custom initials with handmade floral border.",
-    delivery_city: "Mumbai",
-    status: "new",
-    quoted_price: sampleProduct?.price || 1250,
-    admin_notes: "Handcrafting scheduled in studio queue.",
-    shipping_carrier: "",
-    tracking_number: "",
-    created_at: new Date().toISOString(),
-  };
-}
+    // 2. Second priority: Query server API / Supabase
+    fetch(`/api/orders?id=${encodeURIComponent(orderId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.orders && data.orders.length > 0) {
+          const dbOrder = data.orders[0];
+          setOrder({
+            id: dbOrder.order_id || orderId,
+            order_id: dbOrder.order_id || orderId,
+            customer_name: dbOrder.customer_name || matchedOrder?.customer_name || "Valued Customer",
+            customer_phone: dbOrder.customer_phone || matchedOrder?.customer_phone || "",
+            customer_email: dbOrder.customer_email || matchedOrder?.customer_email || "",
+            preferred_channel: dbOrder.preferred_channel || matchedOrder?.preferred_channel || "whatsapp",
+            product_name: dbOrder.product_name || matchedOrder?.product_name || "Handcrafted Creation",
+            product_photo_url: dbOrder.product_photo_url || matchedOrder?.product_photo_url || "/products/handkerchief-iloveu-embroidery.jpg",
+            quantity: dbOrder.quantity || matchedOrder?.quantity || 1,
+            size_variant: dbOrder.size_variant || matchedOrder?.size_variant || "Standard Size",
+            customization_note: dbOrder.customization_note || matchedOrder?.customization_note || "",
+            delivery_city: dbOrder.delivery_city || matchedOrder?.delivery_city || "India",
+            status: dbOrder.status || matchedOrder?.status || "new",
+            quoted_price: dbOrder.product_price || matchedOrder?.quoted_price || null,
+            admin_notes: dbOrder.admin_notes || "",
+            shipping_carrier: dbOrder.shipping_carrier || "",
+            tracking_number: dbOrder.tracking_number || "",
+            created_at: dbOrder.created_at || matchedOrder?.created_at || new Date().toISOString(),
+          });
+        } else if (matchedOrder) {
+          setOrder(matchedOrder);
+        } else {
+          // If viewing an order from another device where Supabase is not connected
+          setOrder({
+            id: orderId,
+            order_id: orderId,
+            customer_name: "Customer Order",
+            customer_phone: "",
+            customer_email: "",
+            preferred_channel: "whatsapp",
+            product_name: "Handcrafted Thread Creation",
+            product_photo_url: "/products/handkerchief-iloveu-embroidery.jpg",
+            quantity: 1,
+            size_variant: "Standard Size",
+            customization_note: "Custom initials / bespoke handmade design",
+            delivery_city: "India",
+            status: "new",
+            quoted_price: null,
+            created_at: new Date().toISOString(),
+          });
+        }
+      })
+      .catch(() => {
+        if (matchedOrder) {
+          setOrder(matchedOrder);
+        } else {
+          setOrder({
+            id: orderId,
+            order_id: orderId,
+            customer_name: "Customer Order",
+            customer_phone: "",
+            customer_email: "",
+            preferred_channel: "whatsapp",
+            product_name: "Handcrafted Thread Creation",
+            product_photo_url: "/products/handkerchief-iloveu-embroidery.jpg",
+            quantity: 1,
+            size_variant: "Standard Size",
+            customization_note: "Custom initials / bespoke handmade design",
+            delivery_city: "India",
+            status: "new",
+            quoted_price: null,
+            created_at: new Date().toISOString(),
+          });
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [orderId]);
 
-// Dynamic Open Graph metadata generator for WhatsApp / Instagram / Social previews
-export async function generateMetadata({ params }: OrderPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const order = await getOrderDetails(id);
-
-  const title = `ArtByThread.7 Order #${order.order_id} — ${order.product_name}`;
-  const description = `Handmade order for ${order.product_name} (Qty: ${order.quantity}) • Status: ${order.status.toUpperCase()} • Handcrafted in India with heart.`;
-  
-  // Ensure absolute image URL for Open Graph crawlers
-  const photoUrl = order.product_photo_url.startsWith("http")
-    ? order.product_photo_url
-    : `https://artbythread.com${order.product_photo_url}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [
-        {
-          url: photoUrl,
-          width: 800,
-          height: 800,
-          alt: order.product_name,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [photoUrl],
-    },
-  };
-}
-
-export default async function OrderDetailPage({ params }: OrderPageProps) {
-  const { id } = await params;
-  const order = await getOrderDetails(id);
-
-  if (!order) {
-    return notFound();
-  }
-
-  // Pipeline status definition
   const steps = [
     { key: "new", label: "New Order", desc: "Enquiry logged & reviewed" },
     { key: "confirmed", label: "Confirmed", desc: "Design & slot finalized" },
@@ -161,12 +196,25 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
     cancelled: -1,
   };
 
-  const currentStepIndex = statusMap[order.status] ?? 0;
+  if (isLoading || !order) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F2] pt-32 pb-16 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-3 border-[#C84B31]/30 border-t-[#C84B31] rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-[#8C7D72] uppercase tracking-widest">
+            Loading Order #{orderId}...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentStepIndex = statusMap[(order.status || "new").toLowerCase()] ?? 0;
   const isCancelled = order.status === "cancelled";
 
   // Pre-filled WhatsApp quick query
   const waQueryMsg = `Hi ArtByThread.7 Studio! 🧵 I am checking on my Order #${order.order_id} (${order.product_name}). Could you please share an update? 🌸`;
-  const waQueryUrl = generateWhatsAppUrl(initialSiteSettings.whatsapp_number, waQueryMsg);
+  const waQueryUrl = generateWhatsAppUrl(settings.whatsapp_number, waQueryMsg);
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] pt-24 md:pt-28 pb-16 flex flex-col justify-between">
@@ -175,11 +223,11 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
         {/* Back Link */}
         <div className="flex items-center justify-between text-xs text-[#8C7D72]">
           <Link
-            href="/creations"
+            href="/track-order"
             className="inline-flex items-center gap-1.5 hover:text-[#C84B31] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Explore All Creations</span>
+            <span>← Back to Order History & Tracking</span>
           </Link>
           <span className="font-mono text-[#1F1D1B] bg-[#FFFDF9] px-3 py-1 rounded-full border border-[#E8E0D5]">
             Order #{order.order_id}
@@ -203,7 +251,8 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                   Order <span className="text-[#C84B31] font-mono font-bold">#{order.order_id}</span>
                 </h1>
                 <p className="text-xs text-[#5C4F46] mt-1">
-                  Placed by <strong>{order.customer_name}</strong> for delivery to <strong>{order.delivery_city}</strong>
+                  Placed by <strong>{order.customer_name}</strong>
+                  {order.delivery_city ? ` for delivery to ${order.delivery_city}` : ""}
                 </p>
               </div>
 
@@ -295,7 +344,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-xs text-[#8C7D72]">
-                    No Photo
+                    <Package className="w-8 h-8 text-[#C84B31]" />
                   </div>
                 )}
               </div>
@@ -309,16 +358,20 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                   <h3 className="font-serif text-2xl text-[#1F1D1B]">
                     {order.product_name}
                   </h3>
-                  <div className="flex items-center gap-3 text-xs text-[#5C4F46] pt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#5C4F46] pt-1">
                     <span className="font-semibold text-[#1F1D1B]">
                       Qty: {order.quantity}
                     </span>
                     <span>•</span>
-                    <span>Variant: {order.size_variant}</span>
-                    <span>•</span>
-                    <span className="font-semibold text-[#1F1D1B]">
-                      {formatPrice(order.quoted_price)}
-                    </span>
+                    <span>Variant: {order.size_variant || "Standard Size"}</span>
+                    {order.quoted_price && (
+                      <>
+                        <span>•</span>
+                        <span className="font-semibold text-[#1F1D1B]">
+                          {formatPrice(order.quoted_price)}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -335,7 +388,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
 
                   {order.customer_phone && (
                     <div className="flex items-center gap-2">
-                      <span className="text-[#8C7D72] shrink-0 font-mono text-xs">📞</span>
+                      <Phone className="w-4 h-4 text-[#8C7D72] shrink-0" />
                       <div>
                         <strong className="text-[#1F1D1B]">Phone:</strong>{" "}
                         {order.customer_phone}
@@ -353,13 +406,15 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#7D9D8B] shrink-0" />
-                    <div>
-                      <strong className="text-[#1F1D1B]">Delivery City:</strong>{" "}
-                      {order.delivery_city}
+                  {order.delivery_city && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-[#7D9D8B] shrink-0" />
+                      <div>
+                        <strong className="text-[#1F1D1B]">Delivery City:</strong>{" "}
+                        {order.delivery_city}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#8C7D72] shrink-0" />
@@ -388,7 +443,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                     Need Help or Want to Modify?
                   </h4>
                   <p className="text-xs text-[#5C4F46] mt-0.5">
-                    Connect directly with the studio artisan with Order #{order.order_id}.
+                    Connect directly with the studio artisan regarding Order #{order.order_id}.
                   </p>
                 </div>
               </div>
@@ -405,7 +460,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                 </a>
 
                 <a
-                  href={initialSiteSettings.instagram_url}
+                  href={settings.instagram_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-3 px-4 rounded-full bg-[#1F1D1B] hover:bg-[#C84B31] text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors"
@@ -415,7 +470,7 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
                 </a>
 
                 <a
-                  href={`mailto:${initialSiteSettings.email_contact}?subject=${encodeURIComponent(`Query regarding Order #${order.order_id}`)}`}
+                  href={`mailto:${settings.email_contact}?subject=${encodeURIComponent(`Query regarding Order #${order.order_id}`)}`}
                   className="py-3 px-4 rounded-full bg-[#FAF7F2] hover:bg-[#EFE8DE] text-[#1F1D1B] border border-[#E8E0D5] text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <Mail className="w-4 h-4 text-[#C84B31]" />
