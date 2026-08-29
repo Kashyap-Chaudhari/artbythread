@@ -451,3 +451,48 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("query") || searchParams.get("id") || "";
+    const cleanQuery = decodeURIComponent(query).trim();
+
+    if (!cleanQuery) {
+      return NextResponse.json(
+        { success: false, error: "Please provide an Order ID or query." },
+        { status: 400 }
+      );
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from("orders")
+          .select("*")
+          .or(`order_id.ilike.%${cleanQuery}%,customer_phone.ilike.%${cleanQuery}%,customer_email.ilike.%${cleanQuery}%`)
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (data && data.length > 0 && !error) {
+          return NextResponse.json({
+            success: true,
+            orders: data,
+          });
+        }
+      } catch (e) {
+        console.warn("[ORDERS SEARCH ERROR]", e);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      orders: [],
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: "Failed to look up orders." },
+      { status: 500 }
+    );
+  }
+}

@@ -134,6 +134,11 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-[#A3968B]">
               <li>
+                <Link href="/track-order" className="hover:text-[#FAF7F2] transition-colors flex items-center gap-1.5 text-[#FAF7F2] font-medium">
+                  <span>🔍 Track Order & History</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/faq" className="hover:text-[#FAF7F2] transition-colors">
                   Frequently Asked Questions
                 </Link>

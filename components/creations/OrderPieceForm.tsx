@@ -128,6 +128,30 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
         instagram_url: data.instagram_url || settings.instagram_url,
       });
 
+      // Save order to device local storage for /track-order history
+      try {
+        const storedOrder = {
+          order_id: data.order_id,
+          product_name: values.product_name,
+          product_photo_url: photoUrl,
+          quantity: values.quantity,
+          size_variant: values.size_variant || "Standard Size",
+          customer_name: values.customer_name,
+          customer_phone: values.customer_phone,
+          customer_email: values.customer_email,
+          delivery_city: values.delivery_city,
+          customization_note: values.customization_note || "",
+          product_price: values.product_price,
+          status: "new",
+          created_at: new Date().toISOString(),
+        };
+        const prev = JSON.parse(localStorage.getItem("artbythread_customer_orders") || "[]");
+        const filtered = Array.isArray(prev) ? prev.filter((o: any) => o.order_id !== data.order_id) : [];
+        localStorage.setItem("artbythread_customer_orders", JSON.stringify([storedOrder, ...filtered]));
+      } catch (e) {
+        console.warn("[FAILED TO SAVE ORDER IN LOCALSTORAGE]", e);
+      }
+
       if (onSuccess) {
         onSuccess(data.order_id);
       }

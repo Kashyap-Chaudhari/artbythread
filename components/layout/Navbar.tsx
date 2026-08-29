@@ -11,6 +11,7 @@ import {
   X,
   ArrowRight,
   ChevronDown,
+  Package,
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
@@ -56,6 +57,7 @@ export const Navbar: React.FC = () => {
     { label: "Creations", href: "/creations", hasDropdown: true },
     { label: "Collections", href: "/collections" },
     { label: "Custom Studio", href: "/custom", badge: "Bespoke" },
+    { label: "Track Order", href: "/track-order", badge: "Live" },
     { label: "Our Story", href: "/about" },
     { label: "Gallery", href: "/gallery" },
     { label: "Contact", href: "/contact" },
@@ -226,6 +228,16 @@ export const Navbar: React.FC = () => {
                   ⌘K
                 </kbd>
               </button>
+
+              {/* Track Order Quick Link */}
+              <Link
+                href="/track-order"
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFDF9] hover:bg-[#FAF7F2] text-[#3D342D] hover:text-[#C84B31] border border-[#E8E0D5] hover:border-[#D6C7B7] text-xs font-medium transition-all shadow-xs"
+                title="Track Order & History"
+              >
+                <Package className="w-3.5 h-3.5 text-[#C84B31]" />
+                <span className="hidden xl:inline">Track Order</span>
+              </Link>
 
               {/* Instagram Profile */}
               <a
