@@ -8,7 +8,7 @@ export const initialSiteSettings: SiteSettings = {
   whatsapp_default_message: "Hi ArtByThread.7! I visited your website and would love to know more about your handmade creations.",
   instagram_url: "https://instagram.com/artbythread.7",
   instagram_username: "@artbythread.7",
-  email_contact: "kashyap3037@gmail.com",
+  email_contact: "kashyapchaudhari299@gmail.com",
   announcement_banner_text: "✨ Accepting custom handmade requests for upcoming occasions. Handcrafted with love.",
   announcement_banner_enabled: true,
   meta_title: "ArtByThread.7 | Handmade Thread Art, Handkerchief Embroidery & Bespoke Gifts",

@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       additional_notes,
       price,
       hp_field, // Honeypot anti-spam
-      admin_email = "kashyap3037@gmail.com",
+      admin_email = process.env.ADMIN_EMAIL || "kashyapchaudhari299@gmail.com",
     } = body;
 
     // 1. Honeypot check

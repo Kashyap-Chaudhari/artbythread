@@ -12,7 +12,7 @@ This guide outlines how the **ArtByThread.7** zero-cost omnichannel order notifi
    - Form is validated client and server side via **Zod + React Hook Form**.
 2. **Instant Transactional Email Dispatch (Resend)**:
    - **To Customer**: Receives an instant, beautifully formatted HTML confirmation email containing the inline product photo, their unique Order ID (`AT7-XXXX`), summary, and delivery city.
-   - **To Admin (`kashyap3037@gmail.com`)**: Receives an alert with full customer contact information, customization notes, inline product photo, and 1-click links to reply on WhatsApp or open the live order tracking page.
+   - **To Admin (`kashyapchaudhari299@gmail.com`)**: Receives an alert with full customer contact information, customization notes, inline product photo, and 1-click links to reply on WhatsApp or open the live order tracking page.
 3. **Interactive Success Dialog & Rich Link Previews**:
    - **WhatsApp**: Customer taps "Confirm via WhatsApp" with a pre-filled `wa.me` deep link that includes their order details and their public tracking URL (`https://artbythread.com/order/AT7-XXXX`).
    - **Instagram**: Customer taps "Message us on Instagram" and uses the 1-click copyable DM draft.
@@ -32,7 +32,7 @@ If a customer emails your business address directly (e.g. `artbythread.7@gmail.c
 3. In **To**, enter your business address or leave blank and set **Subject** / **Has the words** to `order OR enquiry OR custom`.
 4. Click **Create filter**.
 5. Check:
-   - ✅ **Forward it to**: `kashyap3037@gmail.com` (your monitoring inbox).
+   - ✅ **Forward it to**: `kashyapchaudhari299@gmail.com` (your monitoring inbox).
    - ✅ **Send template / Canned response**: Select your confirmation template ("*Thank you for reaching out to ArtByThread.7! We craft every piece slowly by hand...*").
 
 ---
@@ -50,7 +50,7 @@ Add the following keys:
 ```env
 META_WEBHOOK_VERIFY_TOKEN="artbythread_meta_verify_token_2026"
 RESEND_API_KEY="re_..."
-ADMIN_EMAIL="kashyap3037@gmail.com"
+ADMIN_EMAIL="kashyapchaudhari299@gmail.com"
 ```
 
 ### 3. Meta App Dashboard Configuration:

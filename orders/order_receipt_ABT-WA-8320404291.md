@@ -5,7 +5,7 @@
 ORDER NUMBER        : #ABT-WA-8320404291
 DATE & TIME         : 27 August 2026, 06:57 PM IST
 ORDER CHANNEL       : Website -> Direct WhatsApp Order (+91 8320404291)
-ADMIN NOTIFY EMAIL  : kashyap3037@gmail.com
+ADMIN NOTIFY EMAIL  : kashyapchaudhari299@gmail.com
 PAYMENT METHOD      : Direct UPI / QR (Confirmed via WhatsApp Chat)
 FULFILLMENT STATUS  : Handcrafting in Progress
 
@@ -14,7 +14,7 @@ CUSTOMER & RECIPIENT INFORMATION
 --------------------------------------------------------------------------------
 Customer Name       : Website Visitor (WhatsApp Order)
 WhatsApp Phone      : +91 8320404291
-Destination Email   : kashyap3037@gmail.com
+Destination Email   : kashyapchaudhari299@gmail.com
 Shipping Address    : Confirmed via WhatsApp Chat (+91 8320404291)
 Shipping Carrier    : Express Courier (Pan-India Shipping)
 
@@ -56,7 +56,7 @@ WHATSAPP TRANSMISSION LOG
 --------------------------------------------------------------------------------
 Sent To WhatsApp    : +91 8320404291
 Pre-filled Message  : 
-"Hi ArtByThread.7! I visited your website and would like to confirm my order for the Couples Line Art Handkerchief, KGT Crochet Keychain, BMW Logo Handkerchief Set, and A Bouquet That Never Fades. Notification sent to kashyap3037@gmail.com."
+"Hi ArtByThread.7! I visited your website and would like to confirm my order for the Couples Line Art Handkerchief, KGT Crochet Keychain, BMW Logo Handkerchief Set, and A Bouquet That Never Fades. Notification sent to kashyapchaudhari299@gmail.com."
 
 WhatsApp Direct Link:
 https://api.whatsapp.com/send?phone=918320404291&text=Hi%20ArtByThread.7!%20I%20would%20like%20to%20confirm%20my%20order%20%23ABT-WA-8320404291.
@@ -65,7 +65,7 @@ https://api.whatsapp.com/send?phone=918320404291&text=Hi%20ArtByThread.7!%20I%20
 ADMIN NOTIFICATION ACKNOWLEDGMENT
 --------------------------------------------------------------------------------
 Notification Status : SENT SUCCESSFUL
-Recipient           : kashyap3037@gmail.com
+Recipient           : kashyapchaudhari299@gmail.com
 Timestamp Logged    : 2026-08-27T18:57:39+05:30
 Studio Tagline      : "Made by Thread. Made with Heart."
 
