@@ -26,12 +26,36 @@ export default function ContactPage() {
     "Hi ArtByThread.7,\n\nI visited your website and would love to get in touch!\n\nThank you!"
   );
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !message) return;
-    setFormSent(true);
-    if (typeof window !== "undefined") {
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+
+    setIsSubmitting(true);
+    try {
+      await fetch("/api/notify-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: `MSG-${Date.now().toString().slice(-4)}`,
+          customer_name: name,
+          phone: email.includes("@") ? "" : email,
+          email: email.includes("@") ? email : "",
+          preferred_channel: "email",
+          product_name: "General Studio Note / Message",
+          customization_note: message,
+          admin_email: "kashyapchaudhari299@gmail.com",
+        }),
+      });
+    } catch (err) {
+      console.warn("[CONTACT FORM DISPATCH FAILED]", err);
+    } finally {
+      setIsSubmitting(false);
+      setFormSent(true);
+      if (typeof window !== "undefined") {
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      }
     }
   };
 

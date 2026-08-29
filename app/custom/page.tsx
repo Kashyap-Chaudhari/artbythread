@@ -96,9 +96,34 @@ export default function CustomPage() {
 
     setIsSubmitting(true);
     try {
-      const reqId = `CUST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(6, "0")}`;
-      const result = await submitCustomRequest({
-        request_id: reqId,
+      // 1. Post to live orders API to trigger instant Resend email to studio owner
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_email: formData.email,
+          preferred_channel: "whatsapp",
+          quantity: formData.quantity || 1,
+          delivery_city: formData.delivery_address || "India",
+          product_name: `Custom Commission: ${formData.creation_type}`,
+          product_photo_url: imagePreview || "/products/handkerchief-iloveu-embroidery.jpg",
+          size_variant: formData.approximate_size || "Custom Size",
+          customization_note: `${formData.description}${
+            formData.preferred_colors.length > 0
+              ? ` | Colors: ${formData.preferred_colors.join(", ")}`
+              : ""
+          }${formData.notes ? ` | Notes: ${formData.notes}` : ""}`,
+        }),
+      });
+
+      const data = await response.json();
+      const orderId = data.order_id || `CUST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(4, "0")}`;
+
+      // 2. Also save to in-memory store
+      await submitCustomRequest({
+        request_id: orderId,
         full_name: formData.name,
         phone: formData.phone,
         email: formData.email,
@@ -112,7 +137,31 @@ export default function CustomPage() {
         delivery_address: formData.delivery_address || undefined,
         additional_notes: formData.notes || undefined,
       });
-      setSubmittedRequestId(result.id || reqId);
+
+      // 3. Save to local storage for /track-order
+      try {
+        const storedOrder = {
+          order_id: orderId,
+          product_name: `Custom: ${formData.creation_type}`,
+          product_photo_url: imagePreview || "/products/handkerchief-iloveu-embroidery.jpg",
+          quantity: formData.quantity || 1,
+          size_variant: formData.approximate_size || "Custom Size",
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_email: formData.email,
+          delivery_city: formData.delivery_address || "India",
+          customization_note: formData.description,
+          status: "new",
+          created_at: new Date().toISOString(),
+        };
+        const prev = JSON.parse(localStorage.getItem("artbythread_customer_orders") || "[]");
+        const filtered = Array.isArray(prev) ? prev.filter((o: any) => o.order_id !== orderId) : [];
+        localStorage.setItem("artbythread_customer_orders", JSON.stringify([storedOrder, ...filtered]));
+      } catch (e) {
+        console.warn("[FAILED TO SAVE CUSTOM ORDER IN LOCALSTORAGE]", e);
+      }
+
+      setSubmittedRequestId(orderId);
       setIsSubmitted(true);
 
       // Trigger celebratory confetti
