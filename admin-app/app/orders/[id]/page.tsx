@@ -24,7 +24,7 @@ import {
 import { useAdminStore } from "@/lib/store";
 import { OrderStatus } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { formatPrice, formatDate, generateWhatsAppUrl, generateCustomerWhatsAppUpdate } from "@/lib/utils";
+import { formatPrice, formatDate, generateWhatsAppUrl, generateCustomerWhatsAppUpdate, getStoreUrl } from "@/lib/utils";
 import { CourierModal } from "@/components/orders/CourierModal";
 
 export default function OrderDetailPage() {
@@ -82,7 +82,7 @@ export default function OrderDetailPage() {
     }
   };
 
-  const storeUrl = process.env.NEXT_PUBLIC_STORE_URL || "http://localhost:3000";
+  const storeUrl = getStoreUrl();
   const trackingLink = `${storeUrl}/order/${order.order_id}`;
   const waUrl = generateWhatsAppUrl(
     order.customer_phone || "",

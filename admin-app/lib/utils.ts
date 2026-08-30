@@ -30,8 +30,21 @@ export function formatDate(isoString?: string): string {
   }
 }
 
+export function getStoreUrl(): string {
+  if (process.env.NEXT_PUBLIC_STORE_URL) {
+    return process.env.NEXT_PUBLIC_STORE_URL;
+  }
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && !hostname.includes("127.0.0.1")) {
+      return "https://artbythread.com";
+    }
+  }
+  return "http://localhost:3000";
+}
+
 export function generateCustomerWhatsAppUpdate(order: Order, nextStatus: OrderStatus): string {
-  const storeUrl = process.env.NEXT_PUBLIC_STORE_URL || "http://localhost:3000";
+  const storeUrl = getStoreUrl();
   const trackingLink = `${storeUrl}/order/${order.order_id}`;
 
   let statusText = "Enquiry In Review";

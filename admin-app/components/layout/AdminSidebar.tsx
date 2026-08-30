@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useAdminStore } from "@/lib/store";
 import { clearAdminSession } from "@/lib/auth";
+import { getStoreUrl } from "@/lib/utils";
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -73,7 +74,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) =
     },
   ];
 
-  const storeUrl = process.env.NEXT_PUBLIC_STORE_URL || "http://localhost:3000";
+  const storeUrl = getStoreUrl();
 
   return (
     <>

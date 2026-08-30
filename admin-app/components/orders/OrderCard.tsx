@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { Order, OrderStatus } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { formatPrice, formatDate, generateCustomerWhatsAppUpdate, generateWhatsAppUrl } from "@/lib/utils";
+import { formatPrice, formatDate, generateCustomerWhatsAppUpdate, generateWhatsAppUrl, getStoreUrl } from "@/lib/utils";
 import { CourierModal } from "./CourierModal";
 
 interface OrderCardProps {
@@ -79,7 +79,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     onUpdateStatus(order.order_id, "shipped", carrier, trackingNumber, notes);
   };
 
-  const storeUrl = process.env.NEXT_PUBLIC_STORE_URL || "http://localhost:3000";
+  const storeUrl = getStoreUrl();
   const trackingLink = `${storeUrl}/order/${order.order_id}`;
 
   // WhatsApp quick update message
