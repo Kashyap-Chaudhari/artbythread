@@ -33,31 +33,31 @@ function OrdersPipelineContent() {
       key: "new",
       label: "1. New Enquiry",
       count: orders.filter((o) => o.status === "new").length,
-      badge: "bg-[#FFF3CD] text-[#856404]",
+      badge: "bg-[#FEF3C7] text-[#92400E]",
     },
     {
       key: "confirmed",
       label: "2. Confirmed",
       count: orders.filter((o) => o.status === "confirmed").length,
-      badge: "bg-[#F3E8FF] text-[#6B21A8]",
+      badge: "bg-[#EDE9FE] text-[#5B21B6]",
     },
     {
       key: "in_progress",
-      label: "3. In Production",
+      label: "3. Handcrafting",
       count: orders.filter((o) => o.status === "in_progress").length,
-      badge: "bg-[#FEF3C7] text-[#92400E]",
+      badge: "bg-[#FFEDD5] text-[#9A3412]",
     },
     {
       key: "shipped",
       label: "4. Dispatched",
       count: orders.filter((o) => o.status === "shipped").length,
-      badge: "bg-[#E0F2FE] text-[#0369A1]",
+      badge: "bg-[#E0F2FE] text-[#075985]",
     },
     {
       key: "delivered",
       label: "5. Delivered",
       count: orders.filter((o) => o.status === "delivered").length,
-      badge: "bg-[#E5EDE8] text-[#2E4B37]",
+      badge: "bg-[#E8EDE6] text-[#24422D]",
     },
   ];
 
@@ -89,19 +89,19 @@ function OrdersPipelineContent() {
   }, [orders, activeStatus, channelFilter, searchTerm]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8C7D72] font-semibold">
-            <Package className="w-3.5 h-3.5 text-[#C84B31]" />
-            <span>Order Fulfillment</span>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#8C7D72] font-semibold">
+            <Package className="w-3.5 h-3.5 text-[#9E3B24]" />
+            <span>Fulfillment Pipeline</span>
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl text-[#1F1D1B] mt-0.5">
-            5-Stage Crafting Pipeline
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#1C1917] mt-0.5 font-normal">
+            Orders & Stitching Pipeline
           </h1>
-          <p className="text-xs text-[#5C4F46]">
-            Manage stage progressions, assign courier tracking numbers, and notify customers on WhatsApp.
+          <p className="text-xs text-[#6E635A]">
+            Manage 5-stage workshop transitions, courier dispatches, and WhatsApp updates.
           </p>
         </div>
 
@@ -109,15 +109,15 @@ function OrdersPipelineContent() {
           type="button"
           onClick={() => refreshAllData()}
           disabled={isLoading}
-          className="py-2.5 px-4 rounded-full bg-[#FFFDF9] hover:bg-[#FAF7F2] border border-[#E8E0D5] text-xs font-semibold text-[#1F1D1B] flex items-center gap-2 shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
+          className="py-2.5 px-4 rounded-xl bg-[#FFFDF9] hover:bg-[#F8F5EE] border border-[#E6DFC8] text-xs font-semibold text-[#1C1917] flex items-center gap-2 shadow-2xs transition-colors cursor-pointer self-start sm:self-auto"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#C84B31]" : ""}`} />
-          <span>Sync Live Database</span>
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#9E3B24]" : ""}`} />
+          <span>Sync Database</span>
         </button>
       </div>
 
       {/* Filter Tabs Bar */}
-      <div className="bg-[#FFFDF9] p-3 rounded-2xl border border-[#E8E0D5] shadow-xs flex items-center gap-1.5 overflow-x-auto">
+      <div className="bg-[#FFFDF9] p-2.5 rounded-2xl border border-[#E6DFC8] shadow-2xs flex items-center gap-1.5 overflow-x-auto">
         {filterTabs.map((tab) => {
           const isActive = activeStatus === tab.key;
           return (
@@ -127,14 +127,14 @@ function OrdersPipelineContent() {
               onClick={() => setActiveStatus(tab.key as OrderStatus | "all")}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
                 isActive
-                  ? "bg-[#1F1D1B] text-[#FAF7F2] shadow-xs"
-                  : "text-[#5C4F46] hover:bg-[#FAF7F2] hover:text-[#1F1D1B]"
+                  ? "bg-[#181615] text-[#FAF7F2] shadow-2xs"
+                  : "text-[#6E635A] hover:bg-[#F8F5EE] hover:text-[#1C1917]"
               }`}
             >
               <span>{tab.label}</span>
               <span
                 className={`px-2 py-0.2 text-[10px] rounded-full font-bold ${
-                  isActive ? "bg-white/20 text-white" : tab.badge || "bg-[#E8E0D5] text-[#1F1D1B]"
+                  isActive ? "bg-white/20 text-white" : tab.badge || "bg-[#E6DFC8] text-[#1C1917]"
                 }`}
               >
                 {tab.count}
@@ -152,8 +152,8 @@ function OrdersPipelineContent() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Filter by Order ID (AT7-...), Customer, Phone, City..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#FFFDF9] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31] shadow-2xs"
+            placeholder="Search by Order ID (AT7-...), Customer, Phone, City..."
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#FFFDF9] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24] shadow-2xs"
           />
         </div>
 
@@ -161,9 +161,9 @@ function OrdersPipelineContent() {
           <select
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="px-3.5 py-2.5 rounded-xl bg-[#FFFDF9] border border-[#E8E0D5] text-xs text-[#5C4F46] font-medium outline-none focus:border-[#C84B31] shadow-2xs cursor-pointer"
+            className="px-3.5 py-2.5 rounded-xl bg-[#FFFDF9] border border-[#E6DFC8] text-xs text-[#6E635A] font-medium outline-none focus:border-[#9E3B24] shadow-2xs cursor-pointer"
           >
-            <option value="all">All Channels</option>
+            <option value="all">All Inbound Channels</option>
             <option value="whatsapp">💬 WhatsApp Orders</option>
             <option value="instagram">📸 Instagram Orders</option>
             <option value="email">📧 Email Inquiries</option>
@@ -185,17 +185,17 @@ function OrdersPipelineContent() {
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] p-12 text-center space-y-4 max-w-lg mx-auto shadow-xs">
-          <div className="w-14 h-14 rounded-full bg-[#FAF7F2] border border-[#E8E0D5] text-[#C84B31] flex items-center justify-center mx-auto">
-            <Package className="w-7 h-7" />
+        <div className="bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] p-12 text-center space-y-4 max-w-lg mx-auto shadow-2xs">
+          <div className="w-14 h-14 rounded-2xl bg-[#F8F5EE] border border-[#E6DFC8] text-[#9E3B24] flex items-center justify-center mx-auto text-2xl">
+            🧵
           </div>
           <div className="space-y-1">
-            <h3 className="font-serif text-xl text-[#1F1D1B]">No Orders Found</h3>
+            <h3 className="font-serif text-2xl text-[#1C1917]">No Orders Found</h3>
             <p className="text-xs text-[#8C7D72]">
               {searchTerm
                 ? `No orders matching "${searchTerm}".`
                 : activeStatus !== "all"
-                ? `There are currently no orders in this pipeline stage.`
+                ? `There are currently no orders in this crafting stage.`
                 : "No customer orders logged yet."}
             </p>
           </div>
@@ -207,7 +207,7 @@ function OrdersPipelineContent() {
                 setActiveStatus("all");
                 setChannelFilter("all");
               }}
-              className="py-2 px-4 rounded-full bg-[#1F1D1B] text-white text-xs font-semibold hover:bg-[#C84B31] transition-colors"
+              className="py-2 px-4 rounded-xl bg-[#181615] text-white text-xs font-semibold hover:bg-[#9E3B24] transition-colors"
             >
               Reset Filters
             </button>
@@ -223,7 +223,7 @@ export default function OrdersPipelinePage() {
     <Suspense
       fallback={
         <div className="min-h-[400px] flex items-center justify-center">
-          <div className="w-8 h-8 border-3 border-[#C84B31]/30 border-t-[#C84B31] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-[#9E3B24]/30 border-t-[#9E3B24] rounded-full animate-spin" />
         </div>
       }
     >

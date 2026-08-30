@@ -32,40 +32,40 @@ export default function AnalyticsPage() {
   const emailCount = orders.filter((o) => o.preferred_channel === "email" || !o.preferred_channel).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8C7D72] font-semibold">
-          <BarChart3 className="w-3.5 h-3.5 text-[#C84B31]" />
+        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#8C7D72] font-semibold">
+          <BarChart3 className="w-3.5 h-3.5 text-[#9E3B24]" />
           <span>Studio Insights</span>
         </div>
-        <h1 className="font-serif text-2xl sm:text-3xl text-[#1F1D1B] mt-0.5">
-          Performance & Crafting Velocity
+        <h1 className="font-serif text-3xl sm:text-4xl text-[#1C1917] mt-0.5 font-normal">
+          Atelier Ledger & Reports
         </h1>
-        <p className="text-xs text-[#5C4F46]">
-          Real-time metrics on orders, revenue, preferred channels, and handcrafting stages.
+        <p className="text-xs text-[#6E635A]">
+          Performance metrics on commissions, revenue, inbound channels, and handcrafting stages.
         </p>
       </div>
 
       {/* Top Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] space-y-2 shadow-2xs">
-          <div className="text-xs font-semibold text-[#8C7D72] uppercase tracking-wider">
-            Total Revenue Booked
+        <div className="p-6 bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] space-y-2 shadow-2xs">
+          <div className="text-[10px] font-semibold text-[#8C7D72] uppercase tracking-[0.2em]">
+            Revenue Booked
           </div>
-          <div className="text-3xl font-serif font-bold text-[#1F1D1B]">
+          <div className="text-3xl font-serif font-bold text-[#1C1917]">
             {formatPrice(totalRevenue)}
           </div>
-          <div className="text-[11px] text-[#7D9D8B] font-medium">
+          <div className="text-[11px] text-[#3A5A40] font-medium">
             Across {orders.length} orders
           </div>
         </div>
 
-        <div className="p-6 bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] space-y-2 shadow-2xs">
-          <div className="text-xs font-semibold text-[#8C7D72] uppercase tracking-wider">
+        <div className="p-6 bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] space-y-2 shadow-2xs">
+          <div className="text-[10px] font-semibold text-[#8C7D72] uppercase tracking-[0.2em]">
             Fulfillment Rate
           </div>
-          <div className="text-3xl font-serif font-bold text-[#2E4B37]">
+          <div className="text-3xl font-serif font-bold text-[#24422D]">
             {totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0}%
           </div>
           <div className="text-[11px] text-[#8C7D72]">
@@ -73,11 +73,11 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="p-6 bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] space-y-2 shadow-2xs">
-          <div className="text-xs font-semibold text-[#8C7D72] uppercase tracking-wider">
-            Active Crafting Queue
+        <div className="p-6 bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] space-y-2 shadow-2xs">
+          <div className="text-[10px] font-semibold text-[#8C7D72] uppercase tracking-[0.2em]">
+            Crafting Queue
           </div>
-          <div className="text-3xl font-serif font-bold text-[#D97706]">
+          <div className="text-3xl font-serif font-bold text-[#9A3412]">
             {activeQueue} Pieces
           </div>
           <div className="text-[11px] text-[#8C7D72]">
@@ -85,11 +85,11 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="p-6 bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] space-y-2 shadow-2xs">
-          <div className="text-xs font-semibold text-[#8C7D72] uppercase tracking-wider">
+        <div className="p-6 bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] space-y-2 shadow-2xs">
+          <div className="text-[10px] font-semibold text-[#8C7D72] uppercase tracking-[0.2em]">
             Catalog Creations
           </div>
-          <div className="text-3xl font-serif font-bold text-[#C84B31]">
+          <div className="text-3xl font-serif font-bold text-[#9E3B24]">
             {products.length} Items
           </div>
           <div className="text-[11px] text-[#8C7D72]">
@@ -101,8 +101,8 @@ export default function AnalyticsPage() {
       {/* Breakdown Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Preferred Order Channel */}
-        <div className="bg-[#FFFDF9] p-6 rounded-3xl border border-[#E8E0D5] space-y-4 shadow-2xs">
-          <h3 className="font-serif text-lg text-[#1F1D1B]">
+        <div className="bg-[#FFFDF9] p-6 rounded-2xl border border-[#E6DFC8] space-y-4 shadow-2xs">
+          <h3 className="font-serif text-2xl text-[#1C1917] font-normal">
             Customer Inbound Channels
           </h3>
 
@@ -114,7 +114,7 @@ export default function AnalyticsPage() {
                 </span>
                 <span>{waCount} orders ({totalOrders > 0 ? Math.round((waCount / totalOrders) * 100) : 0}%)</span>
               </div>
-              <div className="w-full h-2 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E8E0D5]">
+              <div className="w-full h-2 bg-[#F8F5EE] rounded-full overflow-hidden border border-[#E6DFC8]">
                 <div
                   className="h-full bg-[#25D366] rounded-full"
                   style={{ width: `${totalOrders > 0 ? (waCount / totalOrders) * 100 : 0}%` }}
@@ -124,14 +124,14 @@ export default function AnalyticsPage() {
 
             <div>
               <div className="flex justify-between text-xs mb-1 font-semibold">
-                <span className="flex items-center gap-1.5 text-[#C84B31]">
-                  <span>📸 Instagram DM</span>
+                <span className="flex items-center gap-1.5 text-[#9E3B24]">
+                  <span>📸 Instagram Direct</span>
                 </span>
                 <span>{igCount} orders ({totalOrders > 0 ? Math.round((igCount / totalOrders) * 100) : 0}%)</span>
               </div>
-              <div className="w-full h-2 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E8E0D5]">
+              <div className="w-full h-2 bg-[#F8F5EE] rounded-full overflow-hidden border border-[#E6DFC8]">
                 <div
-                  className="h-full bg-[#E4929A] rounded-full"
+                  className="h-full bg-[#9E3B24] rounded-full"
                   style={{ width: `${totalOrders > 0 ? (igCount / totalOrders) * 100 : 0}%` }}
                 />
               </div>
@@ -144,7 +144,7 @@ export default function AnalyticsPage() {
                 </span>
                 <span>{emailCount} orders ({totalOrders > 0 ? Math.round((emailCount / totalOrders) * 100) : 0}%)</span>
               </div>
-              <div className="w-full h-2 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E8E0D5]">
+              <div className="w-full h-2 bg-[#F8F5EE] rounded-full overflow-hidden border border-[#E6DFC8]">
                 <div
                   className="h-full bg-[#8C7D72] rounded-full"
                   style={{ width: `${totalOrders > 0 ? (emailCount / totalOrders) * 100 : 0}%` }}
@@ -155,8 +155,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Studio Pipeline Breakdown */}
-        <div className="bg-[#FFFDF9] p-6 rounded-3xl border border-[#E8E0D5] space-y-4 shadow-2xs">
-          <h3 className="font-serif text-lg text-[#1F1D1B]">
+        <div className="bg-[#FFFDF9] p-6 rounded-2xl border border-[#E6DFC8] space-y-4 shadow-2xs">
+          <h3 className="font-serif text-2xl text-[#1C1917] font-normal">
             Pipeline Distribution
           </h3>
 
@@ -168,32 +168,32 @@ export default function AnalyticsPage() {
                 color: "bg-[#D97706]",
               },
               {
-                stage: "Stage 2: Confirmed",
+                stage: "Stage 2: Confirmed Slot",
                 count: orders.filter((o) => o.status === "confirmed").length,
-                color: "bg-[#9333EA]",
+                color: "bg-[#7C3AED]",
               },
               {
-                stage: "Stage 3: In Production",
+                stage: "Stage 3: Handcrafting",
                 count: orders.filter((o) => o.status === "in_progress").length,
-                color: "bg-[#C84B31]",
+                color: "bg-[#EA580C]",
               },
               {
-                stage: "Stage 4: Dispatched",
+                stage: "Stage 4: Dispatched (Courier)",
                 count: orders.filter((o) => o.status === "shipped").length,
                 color: "bg-[#0284C7]",
               },
               {
                 stage: "Stage 5: Delivered",
                 count: orders.filter((o) => o.status === "delivered").length,
-                color: "bg-[#2E4B37]",
+                color: "bg-[#2D5A38]",
               },
             ].map((st) => (
               <div key={st.stage}>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="font-medium text-[#5C4F46]">{st.stage}</span>
+                  <span className="font-medium text-[#6E635A]">{st.stage}</span>
                   <span className="font-bold">{st.count} orders</span>
                 </div>
-                <div className="w-full h-2 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E8E0D5]">
+                <div className="w-full h-2 bg-[#F8F5EE] rounded-full overflow-hidden border border-[#E6DFC8]">
                   <div
                     className={`h-full ${st.color} rounded-full`}
                     style={{ width: `${totalOrders > 0 ? (st.count / totalOrders) * 100 : 0}%` }}

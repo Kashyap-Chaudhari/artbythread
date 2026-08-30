@@ -15,6 +15,8 @@ import {
   MessageCircle,
   Plus,
   Palette,
+  Scissors,
+  Bookmark,
 } from "lucide-react";
 import { useAdminStore } from "@/lib/store";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -36,63 +38,74 @@ export default function AdminDashboardPage() {
     .filter((o) => o.status !== "cancelled")
     .reduce((acc, o) => acc + (o.quoted_price || 0), 0);
 
+  const currentDateFormatted = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   const kpis = [
     {
       label: "Total Orders Logged",
       value: orders.length,
       sub: `${newOrders.length} requiring review`,
       icon: Package,
-      bg: "bg-[#FAF7F2]",
-      color: "text-[#1F1D1B]",
+      bg: "bg-[#FFFDF9]",
+      border: "border-[#E6DFC8]",
+      color: "text-[#1C1917]",
     },
     {
-      label: "In Studio Queue",
+      label: "On the Hoop / Loom",
       value: inProgressOrders.length + confirmedOrders.length,
       sub: `${inProgressOrders.length} currently stitching`,
       icon: Clock,
-      bg: "bg-[#FEF3C7]/40",
-      color: "text-[#D97706]",
+      bg: "bg-[#FFEDD5]/40",
+      border: "border-[#FED7AA]",
+      color: "text-[#9A3412]",
     },
     {
       label: "Dispatched / En Route",
       value: shippedOrders.length,
-      sub: "With courier tracking",
+      sub: "With tracking number",
       icon: Truck,
       bg: "bg-[#E0F2FE]/40",
-      color: "text-[#0284C7]",
+      border: "border-[#BAE6FD]",
+      color: "text-[#075985]",
     },
     {
       label: "Delivered Pieces",
       value: deliveredOrders.length,
-      sub: "Completed orders",
+      sub: "Completed creations",
       icon: CheckCircle2,
-      bg: "bg-[#E5EDE8]/40",
-      color: "text-[#2E4B37]",
+      bg: "bg-[#E8EDE6]/50",
+      border: "border-[#CCD9CA]",
+      color: "text-[#24422D]",
     },
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFDF9] p-6 sm:p-8 rounded-3xl border border-[#E8E0D5] shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8C7D72] font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-[#C84B31]" />
-            <span>Studio Operations Center</span>
+    <div className="space-y-8 max-w-6xl mx-auto">
+      {/* Studio Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFDF9] p-6 sm:p-8 rounded-2xl border border-[#E6DFC8] shadow-xs">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#8C7D72] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#9E3B24]" />
+            <span>Atelier Ledger • {currentDateFormatted}</span>
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl text-[#1F1D1B]">
-            Namaste, Studio Artisan 🧵
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#1C1917] font-normal">
+            Studio Operations Overview
           </h1>
-          <p className="text-xs text-[#5C4F46]">
-            Here is your live summary of orders, handcrafting pipelines, and customer enquiries.
+          <p className="text-xs text-[#6E635A] max-w-xl leading-relaxed">
+            Welcome, Henvi & Kashyap. Here is the live status of your handmade commissions, stitching queue, and dispatched packages.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={() => setIsProductModalOpen(true)}
-            className="py-2.5 px-4 rounded-full bg-[#1F1D1B] hover:bg-[#C84B31] text-[#FAF7F2] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="py-2.5 px-4 rounded-xl bg-[#181615] hover:bg-[#9E3B24] text-[#FAF7F2] text-xs font-semibold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Creation</span>
@@ -100,7 +113,7 @@ export default function AdminDashboardPage() {
 
           <Link
             href="/orders"
-            className="py-2.5 px-4 rounded-full bg-[#FAF7F2] hover:bg-[#EFE8DE] text-xs font-semibold text-[#1F1D1B] border border-[#E8E0D5] transition-colors"
+            className="py-2.5 px-4 rounded-xl bg-[#F8F5EE] hover:bg-[#EDE5D6] text-xs font-semibold text-[#1C1917] border border-[#E6DFC8] transition-colors"
           >
             Manage Pipeline →
           </Link>
@@ -114,14 +127,14 @@ export default function AdminDashboardPage() {
           return (
             <div
               key={kpi.label}
-              className={`p-5 rounded-3xl border border-[#E8E0D5] ${kpi.bg} flex flex-col justify-between space-y-3 shadow-2xs`}
+              className={`p-5 rounded-2xl border ${kpi.border} ${kpi.bg} flex flex-col justify-between space-y-3 shadow-2xs`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-[#8C7D72]">{kpi.label}</span>
+                <span className="text-xs font-medium text-[#6E635A]">{kpi.label}</span>
                 <Icon className={`w-4 h-4 ${kpi.color}`} />
               </div>
               <div>
-                <div className={`text-2xl sm:text-3xl font-serif font-bold ${kpi.color}`}>
+                <div className={`text-3xl font-serif font-bold ${kpi.color}`}>
                   {kpi.value}
                 </div>
                 <div className="text-[11px] text-[#8C7D72] mt-0.5">{kpi.sub}</div>
@@ -131,65 +144,75 @@ export default function AdminDashboardPage() {
         })}
       </div>
 
-      {/* 5-Stage Pipeline Overview Strip */}
-      <div className="bg-[#FFFDF9] p-6 rounded-3xl border border-[#E8E0D5] space-y-4">
+      {/* 5-Stage Crafting Pipeline Strip */}
+      <div className="bg-[#FFFDF9] p-6 sm:p-7 rounded-2xl border border-[#E6DFC8] space-y-4 shadow-xs">
         <div className="flex items-center justify-between">
-          <h2 className="font-serif text-lg text-[#1F1D1B]">
-            Crafting Pipeline at a Glance
-          </h2>
+          <div>
+            <h2 className="font-serif text-2xl text-[#1C1917] font-normal">
+              5-Stage Crafting Pipeline
+            </h2>
+            <p className="text-xs text-[#6E635A] mt-0.5">
+              Current queue progression across all handcrafted pieces
+            </p>
+          </div>
           <Link
             href="/orders"
-            className="text-xs text-[#C84B31] font-semibold hover:underline flex items-center gap-1"
+            className="text-xs text-[#9E3B24] font-semibold hover:underline flex items-center gap-1"
           >
             <span>Open Pipeline View</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-1">
           {[
             {
               stage: "1. New Enquiry",
               count: newOrders.length,
-              bg: "bg-[#FFF3CD]",
-              text: "text-[#856404]",
+              bg: "bg-[#FEF3C7]/60",
+              border: "border-[#FDE68A]",
+              text: "text-[#92400E]",
               href: "/orders?status=new",
             },
             {
               stage: "2. Confirmed",
               count: confirmedOrders.length,
-              bg: "bg-[#F3E8FF]",
-              text: "text-[#6B21A8]",
+              bg: "bg-[#EDE9FE]/60",
+              border: "border-[#DDD6FE]",
+              text: "text-[#5B21B6]",
               href: "/orders?status=confirmed",
             },
             {
-              stage: "3. In Production",
+              stage: "3. Handcrafting",
               count: inProgressOrders.length,
-              bg: "bg-[#FEF3C7]",
-              text: "text-[#92400E]",
+              bg: "bg-[#FFEDD5]/60",
+              border: "border-[#FED7AA]",
+              text: "text-[#9A3412]",
               href: "/orders?status=in_progress",
             },
             {
               stage: "4. Dispatched",
               count: shippedOrders.length,
-              bg: "bg-[#E0F2FE]",
-              text: "text-[#0369A1]",
+              bg: "bg-[#E0F2FE]/60",
+              border: "border-[#BAE6FD]",
+              text: "text-[#075985]",
               href: "/orders?status=shipped",
             },
             {
               stage: "5. Delivered",
               count: deliveredOrders.length,
-              bg: "bg-[#E5EDE8]",
-              text: "text-[#2E4B37]",
+              bg: "bg-[#E8EDE6]/70",
+              border: "border-[#CCD9CA]",
+              text: "text-[#24422D]",
               href: "/orders?status=delivered",
             },
           ].map((item) => (
             <Link
               key={item.stage}
               href={item.href}
-              className={`p-4 rounded-2xl border border-[#E8E0D5] ${item.bg} hover:shadow-xs transition-all flex flex-col justify-between`}
+              className={`p-4 rounded-xl border ${item.border} ${item.bg} hover:shadow-2xs transition-all flex flex-col justify-between`}
             >
-              <span className={`text-[11px] font-semibold uppercase tracking-wider ${item.text}`}>
+              <span className={`text-[10px] font-semibold uppercase tracking-wider ${item.text}`}>
                 {item.stage}
               </span>
               <div className={`text-2xl font-serif font-bold ${item.text} mt-2`}>
@@ -200,21 +223,21 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Recent Orders Table */}
-      <div className="bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-[#E8E0D5] pb-4">
+      {/* Recent Orders Ledger Table */}
+      <div className="bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] p-6 sm:p-7 space-y-4 shadow-xs">
+        <div className="flex items-center justify-between border-b border-[#E6DFC8] pb-4">
           <div>
-            <h2 className="font-serif text-xl text-[#1F1D1B]">
-              Recent Orders & Enquiries
+            <h2 className="font-serif text-2xl text-[#1C1917] font-normal">
+              Recent Order Ledger
             </h2>
-            <p className="text-xs text-[#8C7D72] mt-0.5">
-              Showing the latest customer submissions
+            <p className="text-xs text-[#6E635A] mt-0.5">
+              Showing the latest customer entries and embroidery orders
             </p>
           </div>
 
           <Link
             href="/orders"
-            className="py-2 px-3.5 rounded-full bg-[#FAF7F2] hover:bg-[#EFE8DE] text-xs font-semibold text-[#1F1D1B] border border-[#E8E0D5] transition-colors"
+            className="py-2 px-3.5 rounded-xl bg-[#F8F5EE] hover:bg-[#EDE5D6] text-xs font-semibold text-[#1C1917] border border-[#E6DFC8] transition-colors"
           >
             View All ({orders.length})
           </Link>
@@ -223,17 +246,17 @@ export default function AdminDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[#E8E0D5] text-[#8C7D72] font-semibold uppercase tracking-wider text-[10px]">
+              <tr className="border-b border-[#E6DFC8] text-[#8C7D72] font-semibold uppercase tracking-wider text-[10px]">
                 <th className="pb-3 pl-2">Order ID</th>
                 <th className="pb-3">Customer</th>
-                <th className="pb-3">Creation</th>
-                <th className="pb-3">City</th>
+                <th className="pb-3">Creation Piece</th>
+                <th className="pb-3">Delivery City</th>
                 <th className="pb-3">Status</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3 text-right pr-2">Action</th>
+                <th className="pb-3">Logged Date</th>
+                <th className="pb-3 text-right pr-2">Quick Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E8E0D5]/60 text-[#1F1D1B]">
+            <tbody className="divide-y divide-[#E6DFC8]/60 text-[#1C1917]">
               {orders.slice(0, 6).map((ord) => {
                 const waUrl = generateWhatsAppUrl(
                   ord.customer_phone || "",
@@ -241,13 +264,13 @@ export default function AdminDashboardPage() {
                 );
 
                 return (
-                  <tr key={ord.order_id} className="hover:bg-[#FAF7F2]/80 transition-colors">
-                    <td className="py-3.5 pl-2 font-mono font-bold text-[#C84B31]">
+                  <tr key={ord.order_id} className="hover:bg-[#F8F5EE]/60 transition-colors">
+                    <td className="py-3.5 pl-2 font-mono font-bold text-[#9E3B24]">
                       #{ord.order_id}
                     </td>
                     <td className="py-3.5">
                       <div className="font-semibold">{ord.customer_name}</div>
-                      <div className="text-[11px] text-[#8C7D72]">{ord.customer_phone || "—"}</div>
+                      <div className="text-[11px] text-[#8C7D72] font-mono">{ord.customer_phone || "—"}</div>
                     </td>
                     <td className="py-3.5">
                       <div className="font-medium truncate max-w-[220px]">
@@ -255,7 +278,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="text-[11px] text-[#8C7D72]">Qty: {ord.quantity}</div>
                     </td>
-                    <td className="py-3.5 text-[#5C4F46]">
+                    <td className="py-3.5 text-[#6E635A]">
                       {ord.delivery_city || "India"}
                     </td>
                     <td className="py-3.5">
@@ -271,7 +294,7 @@ export default function AdminDashboardPage() {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors"
+                            className="p-1.5 rounded-lg bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors"
                             title="Chat with customer on WhatsApp"
                           >
                             <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
@@ -279,7 +302,7 @@ export default function AdminDashboardPage() {
                         )}
                         <Link
                           href={`/orders?search=${ord.order_id}`}
-                          className="py-1 px-2.5 rounded-full bg-[#1F1D1B] hover:bg-[#C84B31] text-white text-[11px] font-semibold transition-colors"
+                          className="py-1 px-3 rounded-lg bg-[#181615] hover:bg-[#9E3B24] text-white text-[11px] font-semibold transition-colors"
                         >
                           Manage
                         </Link>

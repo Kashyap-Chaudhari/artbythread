@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Product } from "@/lib/types";
-import { Sparkles, X, Plus, Image as ImageIcon } from "lucide-react";
+import { Sparkles, X, Plus, Scissors } from "lucide-react";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -36,7 +36,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !description.trim()) {
-      alert("Please provide a product title and description.");
+      alert("Please provide a creation title and description.");
       return;
     }
 
@@ -66,20 +66,20 @@ export const ProductModal: React.FC<ProductModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-[#FFFDF9] rounded-3xl border border-[#E8E0D5] max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#FFFDF9] rounded-2xl border border-[#E6DFC8] max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#E8E0D5] pb-4">
+        <div className="flex items-center justify-between border-b border-[#E6DFC8] pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FFF3CD] text-[#C84B31] flex items-center justify-center">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-[#9E3B24] flex items-center justify-center">
+              <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-serif text-xl text-[#1F1D1B]">
-                Add New Handmade Creation
+              <h3 className="font-serif text-2xl text-[#1C1917]">
+                Add New Creation
               </h3>
               <p className="text-xs text-[#8C7D72]">
-                Publish a new piece to your store catalog
+                Publish a piece to your online studio catalog
               </p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-[#8C7D72] hover:text-[#1F1D1B] hover:bg-[#FAF7F2] transition-colors"
+            className="p-2 rounded-lg text-[#8C7D72] hover:text-[#1C1917] hover:bg-[#F8F5EE] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -96,7 +96,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
         {/* Product Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
+            <label className="block text-xs font-semibold text-[#1C1917] mb-1">
               Creation Title *
             </label>
             <input
@@ -105,19 +105,19 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Personalized Daisy Embroidered Handkerchief"
-              className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
+              className="w-full px-4 py-2.5 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
+              <label className="block text-xs font-semibold text-[#1C1917] mb-1">
                 Category *
               </label>
               <select
                 value={categorySlug}
                 onChange={(e) => setCategorySlug(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
+                className="w-full px-4 py-2.5 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24]"
               >
                 {categories.map((c) => (
                   <option key={c.slug} value={c.slug}>
@@ -128,7 +128,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
+              <label className="block text-xs font-semibold text-[#1C1917] mb-1">
                 Price (INR ₹)
               </label>
               <input
@@ -136,13 +136,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="e.g. 650"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
+                className="w-full px-4 py-2.5 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
+            <label className="block text-xs font-semibold text-[#1C1917] mb-1">
               Photo URL / Image Path *
             </label>
             <input
@@ -151,13 +151,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="/products/handkerchief-iloveu-embroidery.jpg or https://..."
-              className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] font-mono outline-none focus:border-[#C84B31]"
+              className="w-full px-4 py-2.5 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] font-mono outline-none focus:border-[#9E3B24]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
-              Description & Story *
+            <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+              Description & Crafting Story *
             </label>
             <textarea
               rows={3}
@@ -165,13 +165,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the fabric, thread technique, materials, and customization possibilities..."
-              className="w-full px-4 py-2 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
+              className="w-full px-4 py-2 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[#1F1D1B] mb-1">
+              <label className="block text-xs font-semibold text-[#1C1917] mb-1">
                 Making Time
               </label>
               <input
@@ -179,45 +179,45 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 value={makingTime}
                 onChange={(e) => setMakingTime(e.target.value)}
                 placeholder="e.g. 3-5 business days"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
+                className="w-full px-4 py-2.5 rounded-xl bg-[#F8F5EE] border border-[#E6DFC8] text-xs text-[#1C1917] outline-none focus:border-[#9E3B24]"
               />
             </div>
 
             <div className="flex items-center gap-4 pt-5">
-              <label className="flex items-center gap-2 text-xs text-[#1F1D1B] cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-[#1C1917] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isFeatured}
                   onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="rounded text-[#C84B31] focus:ring-[#C84B31]"
+                  className="rounded text-[#9E3B24] focus:ring-[#9E3B24]"
                 />
                 <span>Featured Piece</span>
               </label>
 
-              <label className="flex items-center gap-2 text-xs text-[#1F1D1B] cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-[#1C1917] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isBestseller}
                   onChange={(e) => setIsBestseller(e.target.checked)}
-                  className="rounded text-[#C84B31] focus:ring-[#C84B31]"
+                  className="rounded text-[#9E3B24] focus:ring-[#9E3B24]"
                 />
                 <span>Bestseller</span>
               </label>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#E8E0D5] flex items-center justify-end gap-2.5">
+          <div className="pt-3 border-t border-[#E6DFC8] flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-full bg-[#FAF7F2] hover:bg-[#EFE8DE] text-xs font-semibold text-[#5C4F46] transition-colors"
+              className="py-2.5 px-4 rounded-xl bg-[#F8F5EE] hover:bg-[#EDE5D6] text-xs font-semibold text-[#6E635A] transition-colors cursor-pointer"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="py-2.5 px-6 rounded-full bg-[#1F1D1B] hover:bg-[#C84B31] text-[#FAF7F2] text-xs font-semibold flex items-center gap-1.5 shadow-md transition-colors"
+              className="py-2.5 px-6 rounded-xl bg-[#181615] hover:bg-[#9E3B24] text-[#FAF7F2] text-xs font-semibold flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Save & Publish Creation</span>
