@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   checkAdminCredentials,
   saveAdminSession,
-  ADMIN_CREDENTIALS,
 } from "@/lib/auth";
 import {
   ShieldCheck,
@@ -48,11 +47,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleFillCredentials = () => {
-    setUserId(ADMIN_CREDENTIALS.userId);
-    setPassword(ADMIN_CREDENTIALS.password);
-    setError("");
-  };
+
 
   return (
     <div className="min-h-screen bg-[#1F1D1B] text-[#FAF7F2] flex items-center justify-center p-4 sm:p-6 md:p-10 relative overflow-hidden">
@@ -160,7 +155,7 @@ export default function LoginPage() {
                     setUserId(e.target.value);
                     setError("");
                   }}
-                  placeholder="artbythread@7"
+                  placeholder="Enter Admin User ID"
                   className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#FFFDF9] border border-[#E8E0D5] text-xs font-medium text-[#1F1D1B] placeholder:text-[#8C7D72] outline-none focus:border-[#C84B31] focus:ring-2 focus:ring-[#C84B31]/15 transition-all shadow-2xs"
                 />
               </div>
@@ -226,25 +221,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* 1-Click Fast Fill for Studio Owner */}
-          <div className="p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#E8E0D5] space-y-2 text-center shadow-2xs">
-            <div className="text-[11px] text-[#8C7D72] flex items-center justify-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#7D9D8B]" />
-              <span>Authorized Single Admin Credentials:</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleFillCredentials}
-              className="w-full py-2 px-3 rounded-xl bg-[#FAF7F2] hover:bg-[#EFE8DE] border border-[#E8E0D5] text-xs font-mono text-[#1F1D1B] font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <span>User: <strong className="text-[#C84B31]">artbythread@7</strong></span>
-              <span>•</span>
-              <span>Pass: <strong className="text-[#C84B31]">Henviartbythread@7</strong></span>
-              <span className="text-[10px] bg-[#C84B31] text-white px-2 py-0.5 rounded-full font-sans">
-                Fill
-              </span>
-            </button>
-          </div>
+
 
         </div>
 

@@ -26,7 +26,7 @@ export function saveAdminSession(userId: string): void {
   if (typeof window !== "undefined") {
     const user: AdminUser = {
       userId: userId.trim(),
-      name: "Henvi & Kashyap",
+      name: "Henvi",
       role: "Studio Master Admin",
       loginTime: new Date().toISOString(),
     };
@@ -58,7 +58,7 @@ export function getAdminUser(): AdminUser | null {
   if (!data) {
     return {
       userId: "artbythread@7",
-      name: "Henvi & Kashyap",
+      name: "Henvi",
       role: "Studio Master Admin",
       loginTime: new Date().toISOString(),
     };

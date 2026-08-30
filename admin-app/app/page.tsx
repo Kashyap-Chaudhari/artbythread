@@ -97,7 +97,7 @@ export default function AdminDashboardPage() {
             Studio Operations Overview
           </h1>
           <p className="text-xs text-[#6E635A] max-w-xl leading-relaxed">
-            Welcome, Henvi & Kashyap. Here is the live status of your handmade commissions, stitching queue, and dispatched packages.
+            Welcome back, Henvi ✨ Here is the live status of your handmade commissions, stitching queue, and dispatched packages.
           </p>
         </div>
 
@@ -164,7 +164,7 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-1">
+        <div className="flex overflow-x-auto sm:grid sm:grid-cols-5 gap-3 pt-1 pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
           {[
             {
               stage: "1. New Enquiry",
@@ -210,7 +210,7 @@ export default function AdminDashboardPage() {
             <Link
               key={item.stage}
               href={item.href}
-              className={`p-4 rounded-xl border ${item.border} ${item.bg} hover:shadow-2xs transition-all flex flex-col justify-between`}
+              className={`p-4 rounded-xl border ${item.border} ${item.bg} hover:shadow-2xs transition-all flex flex-col justify-between min-w-[140px] sm:min-w-0 flex-1`}
             >
               <span className={`text-[10px] font-semibold uppercase tracking-wider ${item.text}`}>
                 {item.stage}
@@ -243,7 +243,8 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop View Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E6DFC8] text-[#8C7D72] font-semibold uppercase tracking-wider text-[10px]">
@@ -313,6 +314,72 @@ export default function AdminDashboardPage() {
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View Cards */}
+        <div className="block md:hidden space-y-3.5">
+          {orders.slice(0, 6).map((ord) => {
+            const waUrl = generateWhatsAppUrl(
+              ord.customer_phone || "",
+              generateCustomerWhatsAppUpdate(ord, ord.status)
+            );
+
+            return (
+              <div 
+                key={ord.order_id} 
+                className="p-4 rounded-xl border border-[#E6DFC8]/80 bg-[#FFFDF9] hover:bg-[#F8F5EE]/40 transition-all space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-[#9E3B24]">
+                    #{ord.order_id}
+                  </span>
+                  <StatusBadge status={ord.status} size="sm" />
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="font-semibold text-xs text-[#1C1917]">
+                    {ord.customer_name}
+                  </div>
+                  {ord.customer_phone && (
+                    <div className="text-[11px] text-[#8C7D72] font-mono">{ord.customer_phone}</div>
+                  )}
+                  <div className="text-[11px] text-[#6E635A]">
+                    {ord.product_name} <span className="text-[#8C7D72]">(Qty: {ord.quantity})</span>
+                  </div>
+                  {ord.delivery_city && (
+                    <div className="text-[11px] text-[#8C7D72] flex items-center gap-1">
+                      📍 {ord.delivery_city}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2.5 border-t border-[#E6DFC8]/60">
+                  <span className="text-[10px] text-[#8C7D72]">
+                    {formatDate(ord.created_at)}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {ord.customer_phone && (
+                      <a
+                        href={waUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors"
+                        title="Chat with customer on WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
+                      </a>
+                    )}
+                    <Link
+                      href={`/orders?search=${ord.order_id}`}
+                      className="py-1 px-3 rounded-lg bg-[#181615] hover:bg-[#9E3B24] text-white text-[11px] font-semibold transition-colors"
+                    >
+                      Manage
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -21,6 +21,8 @@ export const AdminShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }
   }, [pathname]);
 
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   // If on login page, render without sidebar/header immediately
   if (pathname === "/login") {
     return <>{children}</>;
@@ -44,13 +46,13 @@ export const AdminShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
   return (
     <div className="flex min-h-screen bg-[#FAF7F2]">
-      {/* Desktop Navigation Sidebar */}
-      <AdminSidebar />
+      {/* Navigation Sidebar */}
+      <AdminSidebar isOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <AdminHeader />
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-8">
+        <AdminHeader onMenuClick={() => setIsMobileSidebarOpen(true)} />
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6 md:space-y-8">
           {children}
         </main>
       </div>
