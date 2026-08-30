@@ -56,7 +56,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     ? statusHierarchy[currentIdx + 1]
     : null;
 
-  const nextStatusLabels: Record<OrderStatus, string> = {
+  const nextStatusLabels: Partial<Record<OrderStatus, string>> = {
     new: "Mark as New",
     confirmed: "Confirm Order (Stage 2)",
     in_progress: "Start Production (Stage 3)",
@@ -83,7 +83,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
   // WhatsApp quick update message
   const waUpdateMsg = generateCustomerWhatsAppUpdate(order, order.status);
-  const waUrl = generateWhatsAppUrl(order.customer_phone, waUpdateMsg);
+  const waUrl = generateWhatsAppUrl(order.customer_phone || "", waUpdateMsg);
 
   return (
     <>

@@ -24,7 +24,8 @@ export default function CustomRequestsPage() {
     NEW: { bg: "bg-[#FFF3CD]", text: "text-[#856404]" },
     REVIEWING: { bg: "bg-[#FEF3C7]", text: "text-[#92400E]" },
     QUOTED: { bg: "bg-[#F3E8FF]", text: "text-[#6B21A8]" },
-    IN_PRODUCTION: { bg: "bg-[#E0F2FE]", text: "text-[#0369A1]" },
+    CUSTOMER_CONFIRMED: { bg: "bg-[#E0F2FE]", text: "text-[#0369A1]" },
+    IN_PRODUCTION: { bg: "bg-[#FEF3C7]", text: "text-[#92400E]" },
     COMPLETED: { bg: "bg-[#E5EDE8]", text: "text-[#2E4B37]" },
     REJECTED: { bg: "bg-red-50", text: "text-red-700" },
   };

@@ -4,7 +4,26 @@ export type OrderStatus =
   | "in_progress"
   | "shipped"
   | "delivered"
-  | "cancelled";
+  | "cancelled"
+  | "NEW"
+  | "REVIEWING"
+  | "QUOTED"
+  | "CUSTOMER_CONFIRMED"
+  | "IN_PRODUCTION"
+  | "READY_TO_DISPATCH"
+  | "DISPATCHED"
+  | "DELIVERED"
+  | "COMPLETED"
+  | "CANCELLED";
+
+export type CustomRequestStatus =
+  | "NEW"
+  | "REVIEWING"
+  | "QUOTED"
+  | "CUSTOMER_CONFIRMED"
+  | "IN_PRODUCTION"
+  | "COMPLETED"
+  | "REJECTED";
 
 export interface Order {
   id: string;
@@ -74,7 +93,7 @@ export interface CustomRequest {
   target_date?: string;
   delivery_address?: string;
   additional_notes?: string;
-  status: "NEW" | "REVIEWING" | "QUOTED" | "IN_PRODUCTION" | "COMPLETED" | "REJECTED";
+  status: CustomRequestStatus;
   quoted_price?: number | null;
   admin_notes?: string;
   created_at: string;

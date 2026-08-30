@@ -92,15 +92,15 @@ export const AdminHeader: React.FC = () => {
 
         {/* Admin Profile */}
         <div className="flex items-center gap-2 pl-2 border-l border-[#E8E0D5]">
-          <div className="w-8 h-8 rounded-full bg-[#1F1D1B] text-[#FAF7F2] flex items-center justify-center font-serif text-xs font-bold shadow-xs">
-            KC
+          <div className="w-8 h-8 rounded-full bg-[#1F1D1B] text-[#FAF7F2] flex items-center justify-center font-serif text-xs font-bold shadow-xs border border-[#D6C7B7]">
+            🧵
           </div>
           <div className="hidden md:block text-left">
             <span className="text-xs font-semibold text-[#1F1D1B] block leading-tight">
-              Studio Owner
+              Henvi & Kashyap
             </span>
-            <span className="text-[10px] text-[#8C7D72] block leading-none">
-              ArtByThread.7
+            <span className="text-[10px] text-[#C84B31] font-mono block leading-none">
+              artbythread@7
             </span>
           </div>
         </div>
