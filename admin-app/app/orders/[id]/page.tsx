@@ -83,7 +83,7 @@ export default function OrderDetailPage() {
   const storeUrl = process.env.NEXT_PUBLIC_STORE_URL || "http://localhost:3000";
   const trackingLink = `${storeUrl}/order/${order.order_id}`;
   const waUrl = generateWhatsAppUrl(
-    order.customer_phone,
+    order.customer_phone || "",
     generateCustomerWhatsAppUpdate(order, order.status)
   );
 

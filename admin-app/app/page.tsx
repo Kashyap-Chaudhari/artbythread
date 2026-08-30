@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
             <tbody className="divide-y divide-[#E8E0D5]/60 text-[#1F1D1B]">
               {orders.slice(0, 6).map((ord) => {
                 const waUrl = generateWhatsAppUrl(
-                  ord.customer_phone,
+                  ord.customer_phone || "",
                   generateCustomerWhatsAppUpdate(ord, ord.status)
                 );
 

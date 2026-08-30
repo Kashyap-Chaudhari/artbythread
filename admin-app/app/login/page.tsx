@@ -41,7 +41,7 @@ export default function LoginPage() {
     if (checkAdminCredentials(userId, password)) {
       saveAdminSession(userId);
       setError("");
-      router.replace("/");
+      window.location.href = "/";
     } else {
       setError("Invalid User ID or Password. Please verify your studio credentials.");
       setIsSubmitting(false);

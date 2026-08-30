@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Package,
@@ -17,7 +17,7 @@ import { useAdminStore } from "@/lib/store";
 import { OrderStatus } from "@/lib/types";
 import { OrderCard } from "@/components/orders/OrderCard";
 
-export default function OrdersPipelinePage() {
+function OrdersPipelineContent() {
   const searchParams = useSearchParams();
   const initialStatus = (searchParams.get("status") as OrderStatus | "all") || "all";
   const initialSearch = searchParams.get("search") || "";
@@ -215,5 +215,19 @@ export default function OrdersPipelinePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OrdersPipelinePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[400px] flex items-center justify-center">
+          <div className="w-8 h-8 border-3 border-[#C84B31]/30 border-t-[#C84B31] rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <OrdersPipelineContent />
+    </Suspense>
   );
 }
