@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabaseServer } from "@/lib/supabase";
 
 let orderCounter = 1;
 
@@ -94,9 +94,9 @@ export async function POST(request: Request) {
       : "https://artbythread.com/creations";
 
     // 5. Store order in Supabase
-    if (isSupabaseConfigured && supabase) {
+    if (isSupabaseConfigured && supabaseServer) {
       try {
-        await supabase.from("orders").insert([
+        await supabaseServer.from("orders").insert([
           {
             order_id: orderId,
             customer_name: cleanCustomerName,

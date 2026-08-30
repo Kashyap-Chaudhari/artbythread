@@ -29,7 +29,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId.trim() || !password.trim()) {
       setError("Please enter both User ID and Password.");
@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     if (checkAdminCredentials(userId, password)) {
-      saveAdminSession(userId);
+      await saveAdminSession(userId);
       setError("");
       window.location.href = "/";
     } else {

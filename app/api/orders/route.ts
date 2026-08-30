@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { OrderFormSchema } from "@/lib/validations/order";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabaseServer } from "@/lib/supabase";
 import {
   generateOrderId,
   generateWhatsAppOrderConfirmationMessage,
@@ -108,9 +108,9 @@ export async function POST(request: Request) {
 
     // 5. Insert row into Supabase `orders` table
     let dbSuccess = false;
-    if (isSupabaseConfigured && supabase) {
+    if (isSupabaseConfigured && supabaseServer) {
       try {
-        const { error: dbError } = await supabase.from("orders").insert([
+        const { error: dbError } = await supabaseServer.from("orders").insert([
           {
             order_id: orderId,
             customer_name: cleanCustomerName,
@@ -465,9 +465,9 @@ export async function GET(request: Request) {
       );
     }
 
-    if (isSupabaseConfigured && supabase) {
+    if (isSupabaseConfigured && supabaseServer) {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseServer
           .from("orders")
           .select("*")
           .or(`order_id.ilike.%${cleanQuery}%,customer_phone.ilike.%${cleanQuery}%,customer_email.ilike.%${cleanQuery}%`)
