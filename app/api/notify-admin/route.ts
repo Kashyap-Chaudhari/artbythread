@@ -96,31 +96,46 @@ export async function POST(request: Request) {
     // 5. Store order in Supabase
     if (isSupabaseConfigured && supabaseServer) {
       try {
-        await supabaseServer.from("orders").insert([
+        const isUuid = (str?: string | null) =>
+          Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str));
+
+        let preferred_channel: "whatsapp" | "instagram" | "email" = "email";
+        const rawChan = (channel || "email").toLowerCase().replace("_form", "");
+        if (rawChan === "whatsapp") preferred_channel = "whatsapp";
+        else if (rawChan === "instagram") preferred_channel = "instagram";
+        else preferred_channel = "email";
+
+        const { error: dbError } = await supabaseServer.from("orders").insert([
           {
             order_id: orderId,
             customer_name: cleanCustomerName,
             customer_phone: cleanPhone,
             customer_email: cleanEmail,
-            address: cleanAddress,
-            city: cleanCity,
-            state: cleanState,
-            pincode: cleanPincode,
-            product_id: product_id || null,
+            address: cleanAddress || null,
+            delivery_city: cleanCity || null,
+            state: cleanState || null,
+            pincode: cleanPincode || null,
+            product_id: isUuid(product_id) ? product_id : null,
             product_name: cleanProductName,
             product_sku: product_sku || null,
-            product_image_url: product_image_url || null,
+            product_photo_url: product_image_url || null,
             quantity: qty,
-            size_variant: cleanSizeVariant,
+            size_variant: cleanSizeVariant || null,
             customization_details: cleanCustomization || null,
-            additional_notes: cleanNotes || null,
+            customization_note: cleanNotes || cleanCustomization || null,
             quoted_price: price || null,
-            channel,
-            status: "NEW",
+            preferred_channel,
+            status: "new",
           },
         ]);
+
+        if (dbError) {
+          console.warn("[SUPABASE NOTIFY DB INSERT WARNING]", dbError.message);
+        } else {
+          console.log(`[SUPABASE NOTIFY DB INSERT SUCCESS] Order ${orderId} saved.`);
+        }
       } catch (dbErr) {
-        console.warn("Supabase orders insert warning:", dbErr);
+        console.warn("[SUPABASE NOTIFY DB EXCEPTION]", dbErr);
       }
     }
 

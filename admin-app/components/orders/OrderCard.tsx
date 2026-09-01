@@ -104,6 +104,29 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
+              {(() => {
+                const chan = (order.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+                if (chan === "instagram") {
+                  return (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FDF2F8] text-[#BE185D] border border-[#FBCFE8]">
+                      📸 Instagram
+                    </span>
+                  );
+                }
+                if (chan === "email") {
+                  return (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                      📧 Email
+                    </span>
+                  );
+                }
+                return (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#E8F8EE] text-[#1B7E3E] border border-[#C3EBD0]">
+                    💬 WhatsApp
+                  </span>
+                );
+              })()}
+
               <StatusBadge status={order.status} />
             </div>
           </div>

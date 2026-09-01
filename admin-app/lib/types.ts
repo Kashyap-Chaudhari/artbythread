@@ -40,6 +40,7 @@ export interface Order {
   quantity: number;
   size_variant?: string;
   customization_note?: string;
+  customization_details?: string;
   delivery_city?: string;
   address?: string;
   state?: string;

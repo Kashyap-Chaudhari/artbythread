@@ -151,21 +151,21 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
-        const { data: dbOrders } = await supabase
+        const { data: dbOrders, error: ordersErr } = await supabase
           .from("orders")
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (dbOrders && dbOrders.length > 0) {
+        if (dbOrders && !ordersErr) {
           setOrders(dbOrders as Order[]);
         }
 
-        const { data: dbProducts } = await supabase
+        const { data: dbProducts, error: prodErr } = await supabase
           .from("products")
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (dbProducts && dbProducts.length > 0) {
+        if (dbProducts && !prodErr) {
           setProducts(dbProducts as Product[]);
         }
 

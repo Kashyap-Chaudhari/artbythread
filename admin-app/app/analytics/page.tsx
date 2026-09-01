@@ -27,9 +27,9 @@ export default function AnalyticsPage() {
     .reduce((acc, o) => acc + (o.quoted_price || 0), 0);
 
   // Channels
-  const waCount = orders.filter((o) => o.preferred_channel === "whatsapp").length;
-  const igCount = orders.filter((o) => o.preferred_channel === "instagram").length;
-  const emailCount = orders.filter((o) => o.preferred_channel === "email" || !o.preferred_channel).length;
+  const waCount = orders.filter((o) => (o.preferred_channel || "whatsapp").toLowerCase().replace("_form", "") === "whatsapp").length;
+  const igCount = orders.filter((o) => (o.preferred_channel || "").toLowerCase().replace("_form", "") === "instagram").length;
+  const emailCount = orders.filter((o) => (o.preferred_channel || "").toLowerCase().replace("_form", "") === "email").length;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">

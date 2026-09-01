@@ -266,8 +266,30 @@ export default function AdminDashboardPage() {
 
                 return (
                   <tr key={ord.order_id} className="hover:bg-[#F8F5EE]/60 transition-colors">
-                    <td className="py-3.5 pl-2 font-mono font-bold text-[#9E3B24]">
-                      #{ord.order_id}
+                    <td className="py-3.5 pl-2">
+                      <div className="font-mono font-bold text-[#9E3B24]">#{ord.order_id}</div>
+                      {(() => {
+                        const chan = (ord.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+                        if (chan === "instagram") {
+                          return (
+                            <span className="inline-block mt-0.5 text-[9px] font-semibold text-[#BE185D] bg-[#FDF2F8] px-1.5 py-0.5 rounded border border-[#FBCFE8]">
+                              📸 Insta
+                            </span>
+                          );
+                        }
+                        if (chan === "email") {
+                          return (
+                            <span className="inline-block mt-0.5 text-[9px] font-semibold text-[#1D4ED8] bg-[#EFF6FF] px-1.5 py-0.5 rounded border border-[#BFDBFE]">
+                              📧 Email
+                            </span>
+                          );
+                        }
+                        return (
+                          <span className="inline-block mt-0.5 text-[9px] font-semibold text-[#1B7E3E] bg-[#E8F8EE] px-1.5 py-0.5 rounded border border-[#C3EBD0]">
+                            💬 WhatsApp
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="py-3.5">
                       <div className="font-semibold">{ord.customer_name}</div>
@@ -330,9 +352,33 @@ export default function AdminDashboardPage() {
                 className="p-4 rounded-xl border border-[#E6DFC8]/80 bg-[#FFFDF9] hover:bg-[#F8F5EE]/40 transition-all space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs text-[#9E3B24]">
-                    #{ord.order_id}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono font-bold text-xs text-[#9E3B24]">
+                      #{ord.order_id}
+                    </span>
+                    {(() => {
+                      const chan = (ord.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+                      if (chan === "instagram") {
+                        return (
+                          <span className="text-[9px] font-semibold text-[#BE185D] bg-[#FDF2F8] px-1.5 py-0.5 rounded border border-[#FBCFE8]">
+                            📸 Insta
+                          </span>
+                        );
+                      }
+                      if (chan === "email") {
+                        return (
+                          <span className="text-[9px] font-semibold text-[#1D4ED8] bg-[#EFF6FF] px-1.5 py-0.5 rounded border border-[#BFDBFE]">
+                            📧 Email
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className="text-[9px] font-semibold text-[#1B7E3E] bg-[#E8F8EE] px-1.5 py-0.5 rounded border border-[#C3EBD0]">
+                          💬 WhatsApp
+                        </span>
+                      );
+                    })()}
+                  </div>
                   <StatusBadge status={ord.status} size="sm" />
                 </div>
                 

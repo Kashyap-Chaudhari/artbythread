@@ -69,8 +69,13 @@ function OrdersPipelineContent() {
       }
 
       // 2. Channel Filter
-      if (channelFilter !== "all" && ord.preferred_channel !== channelFilter) {
-        return false;
+      if (channelFilter !== "all") {
+        const ordChan = (ord.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+        if (channelFilter === "email") {
+          if (ordChan !== "email") return false;
+        } else if (ordChan !== channelFilter) {
+          return false;
+        }
       }
 
       // 3. Search Filter

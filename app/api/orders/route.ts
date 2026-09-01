@@ -110,14 +110,23 @@ export async function POST(request: Request) {
     let dbSuccess = false;
     if (isSupabaseConfigured && supabaseServer) {
       try {
+        const isUuid = (str?: string | null) =>
+          Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str));
+
+        let safeChannel: "whatsapp" | "instagram" | "email" = "whatsapp";
+        const rawChan = (preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+        if (rawChan === "instagram") safeChannel = "instagram";
+        else if (rawChan === "email") safeChannel = "email";
+        else safeChannel = "whatsapp";
+
         const { error: dbError } = await supabaseServer.from("orders").insert([
           {
             order_id: orderId,
             customer_name: cleanCustomerName,
             customer_phone: cleanPhone,
             customer_email: cleanEmail,
-            preferred_channel,
-            product_id: product_id && product_id.length > 10 ? product_id : null,
+            preferred_channel: safeChannel,
+            product_id: isUuid(product_id) ? product_id : null,
             product_name: cleanProductName,
             product_photo_url: publicPhotoUrl || null,
             product_sku: product_sku || null,
@@ -140,7 +149,7 @@ export async function POST(request: Request) {
           console.warn("[SUPABASE DB INSERT WARNING]", dbError.message);
         } else {
           dbSuccess = true;
-          console.log(`[SUPABASE DB INSERT SUCCESS] Order ${orderId} saved.`);
+          console.log(`[SUPABASE DB INSERT SUCCESS] Order ${orderId} saved via ${safeChannel}.`);
         }
       } catch (dbErr) {
         console.warn("[SUPABASE DB EXCEPTION]", dbErr);
