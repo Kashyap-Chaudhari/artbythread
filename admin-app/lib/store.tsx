@@ -147,8 +147,8 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeStatusFilter, setActiveStatusFilter] = useState<OrderStatus | "all">("all");
 
-  const refreshAllData = async () => {
-    setIsLoading(true);
+  const refreshAllData = async (silent: boolean = false) => {
+    if (!silent) setIsLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
         const { data: dbOrders, error: ordersErr } = await supabase
@@ -191,12 +191,74 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } catch (err) {
       console.warn("[ADMIN REFRESH DATA ERROR]", err);
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    refreshAllData();
+    refreshAllData(false);
+
+    if (!isSupabaseConfigured || !supabase) {
+      return;
+    }
+
+    // 1. Live Realtime Supabase Database Listener (WebSockets)
+    const channel = supabase
+      .channel("admin-live-orders-stream")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            const newOrd = payload.new as Order;
+            setOrders((prev) => {
+              const exists = prev.some((o) => o.order_id === newOrd.order_id || o.id === newOrd.id);
+              if (exists) return prev;
+              return [newOrd, ...prev];
+            });
+          } else if (payload.eventType === "UPDATE") {
+            const updatedOrd = payload.new as Order;
+            setOrders((prev) =>
+              prev.map((o) => (o.order_id === updatedOrd.order_id || o.id === updatedOrd.id ? updatedOrd : o))
+            );
+          } else if (payload.eventType === "DELETE") {
+            const oldOrd = payload.old as Partial<Order>;
+            setOrders((prev) => prev.filter((o) => o.id !== oldOrd.id && o.order_id !== oldOrd.order_id));
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "custom_requests" },
+        () => {
+          refreshAllData(true);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
+        () => {
+          refreshAllData(true);
+        }
+      )
+      .subscribe();
+
+    // 2. Continuous Background Polling (Every 8 seconds) as seamless fallback
+    const pollTimer = setInterval(() => {
+      refreshAllData(true);
+    }, 8000);
+
+    // 3. Auto-sync on Tab Focus (when admin returns to this browser window)
+    const handleFocus = () => {
+      refreshAllData(true);
+    };
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      if (supabase) supabase.removeChannel(channel);
+      clearInterval(pollTimer);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, []);
 
   // Save to local storage on mutation when Supabase is not connected

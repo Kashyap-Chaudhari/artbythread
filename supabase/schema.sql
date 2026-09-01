@@ -421,3 +421,12 @@ CREATE POLICY "Public Insert Reviews" ON reviews FOR INSERT TO anon, authenticat
 DROP POLICY IF EXISTS "Admin Full Access Reviews" ON reviews;
 CREATE POLICY "Admin Full Access Reviews" ON reviews FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
+-- ================================================================================
+-- [CHANGED/ADDED] 14. REALTIME PUBLICATION SETUP
+-- Enable Supabase Realtime WebSocket streaming for instant live dashboard sync
+-- ================================================================================
+ALTER PUBLICATION supabase_realtime ADD TABLE orders;
+ALTER PUBLICATION supabase_realtime ADD TABLE custom_requests;
+ALTER PUBLICATION supabase_realtime ADD TABLE products;
+
+
