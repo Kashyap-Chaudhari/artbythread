@@ -366,11 +366,19 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
 
         <div>
           <label className="text-[11px] font-semibold text-[#3D342D] block mb-1">
-            Phone / WhatsApp <span className="text-[#C84B31]">*</span>
+            {selectedChannel === "instagram"
+              ? "Phone / Instagram Handle *"
+              : selectedChannel === "email"
+              ? "Phone / Mobile Number *"
+              : "Phone / WhatsApp *"}
           </label>
           <input
-            type="tel"
-            placeholder="+91 98765 43210"
+            type="text"
+            placeholder={
+              selectedChannel === "instagram"
+                ? "e.g. +91 98765 43210 or @yourhandle"
+                : "+91 98765 43210"
+            }
             {...register("customer_phone")}
             className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E8E0D5] text-xs text-[#1F1D1B] outline-none focus:border-[#C84B31]"
           />
@@ -420,7 +428,7 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
             <span className="w-6 text-center text-xs font-semibold">{quantity}</span>
             <button
               type="button"
-              onClick={() => setValue("quantity", Math.min(50, quantity + 1))}
+              onClick={() => setValue("quantity", quantity + 1)}
               className="w-6 h-6 rounded-lg bg-[#FFFDF9] text-[#3D342D] flex items-center justify-center text-xs"
             >
               <Plus className="w-3 h-3" />
@@ -451,7 +459,9 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
         ) : (
           <>
             <Sparkles className="w-4 h-4 text-[#E9C46A]" />
-            <span>Place Order Enquiry</span>
+            <span>
+              Place Order via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "instagram" ? "Instagram" : "Email"}
+            </span>
           </>
         )}
       </button>

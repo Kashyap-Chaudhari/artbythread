@@ -584,15 +584,23 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                       )}
                     </div>
 
-                    {/* Phone / WhatsApp */}
+                    {/* Phone / WhatsApp / Instagram Handle */}
                     <div>
                       <label className="text-[11px] font-semibold text-[#3D342D] block mb-1">
-                        Phone / WhatsApp <span className="text-[#C84B31]">*</span>
+                        {selectedChannel === "instagram"
+                          ? "Phone / Instagram Handle *"
+                          : selectedChannel === "email"
+                          ? "Phone / Mobile Number *"
+                          : "Phone / WhatsApp Number *"}
                       </label>
                       <div className="relative">
                         <input
-                          type="tel"
-                          placeholder="e.g. +91 98765 43210"
+                          type="text"
+                          placeholder={
+                            selectedChannel === "instagram"
+                              ? "e.g. +91 98765 43210 or @yourhandle"
+                              : "e.g. +91 98765 43210"
+                          }
                           {...register("customer_phone")}
                           className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border text-xs text-[#1F1D1B] outline-none transition-colors ${
                             errors.customer_phone
@@ -682,7 +690,15 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                 <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E8E0D5] text-[11px] text-[#5C4F46] flex items-start gap-2.5">
                   <HeartHandshake className="w-4 h-4 text-[#C84B31] shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    <strong>Zero-Risk Handmade Order:</strong> No online payment gateway is required. Our studio owner will review availability and confirm your handcrafting timeline on your chosen channel.
+                    <strong>Zero-Risk Handmade Order:</strong> No online payment gateway is required. Our studio owner will review availability and confirm your handcrafting timeline on{" "}
+                    <strong>
+                      {selectedChannel === "whatsapp"
+                        ? "WhatsApp"
+                        : selectedChannel === "instagram"
+                        ? "Instagram DM"
+                        : "Email"}
+                    </strong>
+                    .
                   </p>
                 </div>
 
@@ -701,7 +717,7 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                     <>
                       <Sparkles className="w-4 h-4 text-[#E9C46A]" />
                       <span>
-                        Place Handmade Order Enquiry ({formatPrice(product.price)})
+                        Place Handmade Order via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "instagram" ? "Instagram" : "Email"} ({formatPrice(product.price)})
                       </span>
                     </>
                   )}
