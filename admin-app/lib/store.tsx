@@ -33,61 +33,7 @@ interface AdminStoreContextType {
 
 const AdminStoreContext = createContext<AdminStoreContextType | null>(null);
 
-const SEED_ORDERS: Order[] = [
-  {
-    id: "ord-1",
-    order_id: "AT7-3587",
-    customer_name: "Kashyap Chaudhari",
-    customer_phone: "8320404291",
-    customer_email: "kashyapchaudhari299@gmail.com",
-    preferred_channel: "whatsapp",
-    product_name: "Couples Line Art Embroidered Handkerchief",
-    product_photo_url: "/products/handkerchief-iloveu-embroidery.jpg",
-    quantity: 1,
-    size_variant: "Standard Size",
-    customization_note: "i want to make radha on handkerchief",
-    delivery_city: "GANDHINAGAR",
-    status: "new",
-    quoted_price: 650,
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: "ord-2",
-    order_id: "AT7-5443",
-    customer_name: "Priya Sharma",
-    customer_phone: "9876543210",
-    customer_email: "priya.sharma@example.com",
-    preferred_channel: "whatsapp",
-    product_name: "A Bouquet That Never Fades",
-    product_photo_url: "/products/orchid-bouquet-never-fades.jpg",
-    quantity: 1,
-    size_variant: "5-Stem Luxury Wrap",
-    customization_note: "Pastel blue & ivory ribbon wrap for anniversary",
-    delivery_city: "Ahmedabad",
-    status: "in_progress",
-    quoted_price: 1850,
-    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-  {
-    id: "ord-3",
-    order_id: "AT7-8912",
-    customer_name: "Rohan Patel",
-    customer_phone: "9988776655",
-    customer_email: "rohan.p@example.com",
-    preferred_channel: "instagram",
-    product_name: "Custom Name / 3-Letter Crochet Keychain (KGT)",
-    product_photo_url: "/products/kgt-crochet-keychain.jpg",
-    quantity: 2,
-    size_variant: "Standard Keyring",
-    customization_note: "Initials: 'RP' with daisy charm",
-    delivery_city: "Surat",
-    status: "shipped",
-    quoted_price: 700,
-    shipping_carrier: "DTDC Express",
-    tracking_number: "DTDC-8849201",
-    created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-  },
-];
+const SEED_ORDERS: Order[] = [];
 
 const SEED_PRODUCTS: Product[] = [
   {
@@ -156,8 +102,8 @@ export const AdminStoreProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (dbOrders && !ordersErr) {
-          setOrders(dbOrders as Order[]);
+        if (!ordersErr) {
+          setOrders((dbOrders || []) as Order[]);
         }
 
         const { data: dbProducts, error: prodErr } = await supabase
