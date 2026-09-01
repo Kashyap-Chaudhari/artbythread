@@ -289,19 +289,55 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
           {/* Quick Utility Actions */}
           <div className="flex items-center gap-1.5">
-            {/* WhatsApp Status Update */}
-            {order.customer_phone && (
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-                title="Send pre-filled status update to customer on WhatsApp"
-              >
-                <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
-                <span>WhatsApp</span>
-              </a>
-            )}
+            {/* Direct Channel Contact Button */}
+            {(() => {
+              const chan = (order.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+              if (chan === "instagram") {
+                return (
+                  <a
+                    href="https://instagram.com/artbythread.7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-3 rounded-xl bg-[#E1306C] hover:bg-[#c1275b] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                    title="Open Instagram DM"
+                  >
+                    <span>📸 Instagram</span>
+                  </a>
+                );
+              }
+              if (chan === "email" && order.customer_email) {
+                const mailSubject = encodeURIComponent(`🧵 [ArtByThread] Update on Order #${order.order_id} - ${order.product_name}`);
+                const mailBody = encodeURIComponent(
+                  `Hi ${order.customer_name},\n\nWe are reaching out from ArtByThread Studio regarding your handmade order #${order.order_id} (${order.product_name}).\n\nCurrent Status: ${order.status.toUpperCase()}\n\nBest regards,\nHenvi | ArtByThread Studio`
+                );
+                return (
+                  <a
+                    href={`mailto:${order.customer_email}?subject=${mailSubject}&body=${mailBody}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                    title="Send Email to customer"
+                  >
+                    <span>📧 Email</span>
+                  </a>
+                );
+              }
+              if (order.customer_phone) {
+                return (
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                    title="Send pre-filled status update to customer on WhatsApp"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
+                    <span>WhatsApp</span>
+                  </a>
+                );
+              }
+              return null;
+            })()}
 
             {/* Public Live Tracking Card Link */}
             <a

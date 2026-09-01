@@ -164,6 +164,17 @@ export default function CustomPage() {
       setSubmittedRequestId(orderId);
       setIsSubmitted(true);
 
+      // Automatically launch WhatsApp with pre-filled commission enquiry
+      if (typeof window !== "undefined") {
+        setTimeout(() => {
+          const customWaUrl = generateWhatsAppUrl(
+            settings.whatsapp_number,
+            `✨ Hi ArtByThread.7! 🧵❤️\n\nI just submitted a custom commission request on your website (Request ID: ${orderId}).\n\nName: ${formData.name}\nCreation: ${formData.creation_type}\n\nI’d love to discuss the design, timeline, and quote with you! 🌸`
+          );
+          window.open(customWaUrl, "_blank", "noopener,noreferrer");
+        }, 600);
+      }
+
       // Trigger celebratory confetti
       if (typeof window !== "undefined") {
         confetti({

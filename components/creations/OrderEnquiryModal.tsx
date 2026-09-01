@@ -182,6 +182,34 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
         admin_email_sent: data.admin_email_sent,
       });
 
+      // Automatically launch the respective application (WhatsApp, Instagram, or Email)
+      if (typeof window !== "undefined") {
+        setTimeout(() => {
+          try {
+            if (values.preferred_channel === "whatsapp" && data.whatsapp_url) {
+              window.open(data.whatsapp_url, "_blank", "noopener,noreferrer");
+            } else if (values.preferred_channel === "instagram") {
+              if (data.instagram_text) {
+                try {
+                  navigator.clipboard.writeText(data.instagram_text);
+                } catch {}
+              }
+              const igTarget = data.instagram_url || settings.instagram_url || "https://instagram.com/artbythread.7";
+              window.open(igTarget, "_blank", "noopener,noreferrer");
+            } else if (values.preferred_channel === "email") {
+              const mailSubject = encodeURIComponent(`🧵 [Order #${data.order_id}] ${values.product_name}`);
+              const mailBody = encodeURIComponent(
+                `Hi ArtByThread.7 Studio,\n\nI have placed an order enquiry for "${values.product_name}" (Order #${data.order_id}).\n\nCustomer: ${values.customer_name}\nPhone: ${values.customer_phone || "—"}\nCity: ${values.delivery_city}\nCustomization: ${values.customization_note || "Standard Piece"}\n\nLooking forward to your response!`
+              );
+              const mailto = `mailto:${settings.email_contact || "kashyapchaudhari299@gmail.com"}?subject=${mailSubject}&body=${mailBody}`;
+              window.open(mailto, "_blank");
+            }
+          } catch (err) {
+            console.warn("[AUTO-LAUNCH APP EXCEPTION]", err);
+          }
+        }, 600);
+      }
+
       // Save order to device local storage for /track-order history
       try {
         const storedOrder = {

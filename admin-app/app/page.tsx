@@ -312,17 +312,49 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="py-3.5 text-right pr-2">
                       <div className="flex items-center justify-end gap-1.5">
-                        {ord.customer_phone && (
-                          <a
-                            href={waUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors"
-                            title="Chat with customer on WhatsApp"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
-                          </a>
-                        )}
+                        {(() => {
+                          const chan = (ord.preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+                          if (chan === "instagram") {
+                            return (
+                              <a
+                                href="https://instagram.com/artbythread.7"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 rounded-lg bg-[#E1306C] text-white hover:bg-[#c1275b] transition-colors"
+                                title="Open Instagram"
+                              >
+                                <span className="text-[11px]">📸</span>
+                              </a>
+                            );
+                          }
+                          if (chan === "email" && ord.customer_email) {
+                            return (
+                              <a
+                                href={`mailto:${ord.customer_email}?subject=${encodeURIComponent(`🧵 [ArtByThread] Order #${ord.order_id}`)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 rounded-lg bg-[#2563EB] text-white hover:bg-[#1d4ed8] transition-colors"
+                                title="Send Email"
+                              >
+                                <span className="text-[11px]">📧</span>
+                              </a>
+                            );
+                          }
+                          if (ord.customer_phone) {
+                            return (
+                              <a
+                                href={waUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 rounded-lg bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors"
+                                title="Chat with customer on WhatsApp"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5 fill-white stroke-none" />
+                              </a>
+                            );
+                          }
+                          return null;
+                        })()}
                         <Link
                           href={`/orders?search=${ord.order_id}`}
                           className="py-1 px-3 rounded-lg bg-[#181615] hover:bg-[#9E3B24] text-white text-[11px] font-semibold transition-colors"

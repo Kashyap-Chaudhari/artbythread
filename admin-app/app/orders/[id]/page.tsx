@@ -276,6 +276,38 @@ export default function OrderDetailPage() {
                   <p>{order.address}, {order.state} - {order.pincode}</p>
                 </div>
               )}
+
+              {/* Direct Quick Contact Buttons */}
+              <div className="pt-3 border-t border-[#E6DFC8] flex flex-wrap gap-2">
+                {order.customer_phone && (
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-1.5 px-3 rounded-lg bg-[#25D366] text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-2xs hover:bg-[#20bd5a] transition-colors"
+                  >
+                    <span>💬 WhatsApp Customer</span>
+                  </a>
+                )}
+                {order.customer_email && (
+                  <a
+                    href={`mailto:${order.customer_email}?subject=${encodeURIComponent(`🧵 [ArtByThread] Update on Order #${order.order_id} - ${order.product_name}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-1.5 px-3 rounded-lg bg-[#2563EB] text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-2xs hover:bg-[#1d4ed8] transition-colors"
+                  >
+                    <span>📧 Email Customer</span>
+                  </a>
+                )}
+                <a
+                  href="https://instagram.com/artbythread.7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-1.5 px-3 rounded-lg bg-[#E1306C] text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-2xs hover:bg-[#c1275b] transition-colors"
+                >
+                  <span>📸 Instagram Studio</span>
+                </a>
+              </div>
             </div>
 
             {/* Courier Dispatch Card */}
