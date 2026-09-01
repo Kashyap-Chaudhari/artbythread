@@ -190,7 +190,11 @@ export function generateWhatsAppOrderConfirmationMessage(options: {
     trackingUrl,
   } = options;
 
-  let msg = `*ARTBYTHREAD.7 — ORDER CONFIRMATION*\n\n`;
+  let msg = "";
+  if (productPhotoUrl) {
+    msg += `${productPhotoUrl}\n\n`;
+  }
+  msg += `*ARTBYTHREAD.7 — ORDER CONFIRMATION*\n\n`;
   msg += `Hi ArtByThread.7 Studio! I just submitted an order on your website:\n\n`;
   msg += `• *Order ID:* ${orderId}\n`;
   msg += `• *Customer Name:* ${customerName}\n`;

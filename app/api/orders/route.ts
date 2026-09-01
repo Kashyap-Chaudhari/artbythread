@@ -3,6 +3,7 @@ import { OrderFormSchema } from "@/lib/validations/order";
 import { isSupabaseConfigured, supabaseServer } from "@/lib/supabase";
 import {
   generateOrderId,
+  generateWhatsAppOrderConfirmationMessage,
   generateWhatsAppOrderEnquiryMessage,
   generateEmailOrderEnquiryMessage,
   generateWhatsAppUrl,
@@ -419,16 +420,18 @@ export async function POST(request: Request) {
     }
 
     // 8. Generate WhatsApp, Instagram & Email Information
-    const whatsappMessage = generateWhatsAppOrderEnquiryMessage({
+    const whatsappMessage = generateWhatsAppOrderConfirmationMessage({
       orderId,
-      productName: cleanProductName,
-      productId: product_sku || product_id || "AT7-PIECE",
-      quantity,
       customerName: cleanCustomerName,
       customerPhone: cleanPhone,
       customerEmail: cleanEmail,
-      deliveryCity: cleanCity,
+      productName: cleanProductName,
+      quantity,
+      sizeOrVariant: cleanVariant,
       customizationNote: cleanCustomization,
+      deliveryCity: cleanCity,
+      productPhotoUrl: publicPhotoUrl,
+      trackingUrl,
     });
 
     const whatsappUrl = generateWhatsAppUrl(
