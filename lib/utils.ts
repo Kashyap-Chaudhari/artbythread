@@ -83,6 +83,86 @@ export function generateOrderId(): string {
   return `AT7-${randomDigits}`;
 }
 
+export function generateWhatsAppOrderEnquiryMessage(options: {
+  orderId: string;
+  productName: string;
+  productId?: string;
+  quantity: number;
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  deliveryCity?: string;
+  customizationNote?: string;
+}): string {
+  const {
+    orderId,
+    productName,
+    productId,
+    quantity,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryCity,
+    customizationNote,
+  } = options;
+
+  let msg = `Hi ArtByThread.7! 🧵\n\n`;
+  msg += `I would like to place a handmade order enquiry.\n\n`;
+  msg += `Enquiry ID: ${orderId}\n\n`;
+  msg += `Product: ${productName}\n`;
+  msg += `Product ID: ${productId || "AT7-PIECE"}\n`;
+  msg += `Quantity: ${quantity}\n\n`;
+  msg += `Name: ${customerName}\n`;
+  msg += `Phone / WhatsApp: ${customerPhone || "—"}\n`;
+  msg += `Email: ${customerEmail || "—"}\n`;
+  msg += `Delivery City: ${deliveryCity || "India"}\n\n`;
+  msg += `Customization:\n${customizationNote || "None (Standard Piece)"}\n\n`;
+  msg += `Please confirm availability, customization and handcrafting timeline.`;
+
+  return msg;
+}
+
+export function generateEmailOrderEnquiryMessage(options: {
+  orderId: string;
+  productName: string;
+  productId?: string;
+  quantity: number;
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  deliveryCity?: string;
+  customizationNote?: string;
+}): { subject: string; body: string } {
+  const {
+    orderId,
+    productName,
+    productId,
+    quantity,
+    customerName,
+    customerPhone,
+    customerEmail,
+    deliveryCity,
+    customizationNote,
+  } = options;
+
+  const subject = `Handmade Order Enquiry — ${orderId}`;
+  let body = `Hello ArtByThread.7,\n\n`;
+  body += `I would like to place a handmade order enquiry.\n\n`;
+  body += `Enquiry ID: ${orderId}\n\n`;
+  body += `Product: ${productName}\n`;
+  body += `Product ID: ${productId || "AT7-PIECE"}\n`;
+  body += `Quantity: ${quantity}\n\n`;
+  body += `Customer Name: ${customerName}\n`;
+  body += `Phone / WhatsApp: ${customerPhone || "—"}\n`;
+  body += `Email: ${customerEmail || "—"}\n`;
+  body += `Delivery City: ${deliveryCity || "India"}\n\n`;
+  body += `Customization:\n${customizationNote || "None (Standard Piece)"}\n\n`;
+  body += `Please confirm availability and handcrafting timeline.\n\n`;
+  body += `Thank you.`;
+
+  return { subject, body };
+}
+
 export function generateWhatsAppOrderConfirmationMessage(options: {
   orderId: string;
   customerName: string;

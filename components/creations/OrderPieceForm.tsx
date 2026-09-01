@@ -487,9 +487,7 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
         ) : (
           <>
             <Sparkles className="w-4 h-4 text-[#E9C46A]" />
-            <span>
-              Place Order via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "instagram" ? "Instagram" : "Email"}
-            </span>
+            <span>Place Handmade Order Enquiry</span>
           </>
         )}
       </button>

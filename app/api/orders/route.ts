@@ -3,9 +3,9 @@ import { OrderFormSchema } from "@/lib/validations/order";
 import { isSupabaseConfigured, supabaseServer } from "@/lib/supabase";
 import {
   generateOrderId,
-  generateWhatsAppOrderConfirmationMessage,
+  generateWhatsAppOrderEnquiryMessage,
+  generateEmailOrderEnquiryMessage,
   generateWhatsAppUrl,
-  generateInstagramOrderDMText,
 } from "@/lib/utils";
 import { initialSiteSettings } from "@/lib/data";
 
@@ -106,54 +106,85 @@ export async function POST(request: Request) {
       publicPhotoUrl = `${baseUrl}${publicPhotoUrl}`;
     }
 
-    // 5. Insert row into Supabase `orders` table
-    let dbSuccess = false;
-    if (isSupabaseConfigured && supabaseServer) {
-      try {
-        const isUuid = (str?: string | null) =>
-          Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str));
+    // 5. Check Supabase connection
+    if (!isSupabaseConfigured || !supabaseServer) {
+      console.error("[SUPABASE NOT CONFIGURED] Cannot save order enquiry.");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Database service is temporarily unavailable. Please reach out on WhatsApp directly.",
+        },
+        { status: 500 }
+      );
+    }
 
-        let safeChannel: "whatsapp" | "instagram" | "email" = "whatsapp";
-        const rawChan = (preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
-        if (rawChan === "instagram") safeChannel = "instagram";
-        else if (rawChan === "email") safeChannel = "email";
-        else safeChannel = "whatsapp";
+    const isUuid = (str?: string | null) =>
+      Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str));
 
-        const { error: dbError } = await supabaseServer.from("orders").insert([
-          {
-            order_id: orderId,
-            customer_name: cleanCustomerName,
-            customer_phone: cleanPhone,
-            customer_email: cleanEmail,
-            preferred_channel: safeChannel,
-            product_id: isUuid(product_id) ? product_id : null,
-            product_name: cleanProductName,
-            product_photo_url: publicPhotoUrl || null,
-            product_sku: product_sku || null,
-            quantity,
-            size_variant: cleanVariant,
-            customization_note: cleanCustomization || null,
-            customization_details: cleanCustomization || null,
-            delivery_city: cleanCity,
-            address: cleanAddress || null,
-            state: cleanState || null,
-            pincode: cleanPincode || null,
-            quoted_price: product_price || null,
-            status: "new",
-            admin_notified_at: nowIso,
-            customer_confirmed_at: null,
-          },
-        ]);
+    let safeChannel: "whatsapp" | "instagram" | "email" = "whatsapp";
+    const rawChan = (preferred_channel || "whatsapp").toLowerCase().replace("_form", "");
+    if (rawChan === "instagram") safeChannel = "instagram";
+    else if (rawChan === "email") safeChannel = "email";
+    else safeChannel = "whatsapp";
 
-        if (dbError) {
-          console.warn("[SUPABASE DB INSERT WARNING]", dbError.message);
-        } else {
-          dbSuccess = true;
-          console.log(`[SUPABASE DB INSERT SUCCESS] Order ${orderId} saved via ${safeChannel}.`);
-        }
-      } catch (dbErr) {
-        console.warn("[SUPABASE DB EXCEPTION]", dbErr);
+    // 6. Insert row into Supabase `orders` table
+    const { error: dbError } = await supabaseServer.from("orders").insert([
+      {
+        order_id: orderId,
+        customer_name: cleanCustomerName,
+        customer_phone: cleanPhone,
+        customer_email: cleanEmail,
+        preferred_channel: safeChannel,
+        product_id: isUuid(product_id) ? product_id : null,
+        product_name: cleanProductName,
+        product_photo_url: publicPhotoUrl || null,
+        product_sku: product_sku || null,
+        quantity,
+        size_variant: cleanVariant,
+        customization_note: cleanCustomization || null,
+        customization_details: cleanCustomization || null,
+        delivery_city: cleanCity,
+        address: cleanAddress || null,
+        state: cleanState || null,
+        pincode: cleanPincode || null,
+        quoted_price: product_price || null,
+        status: "new",
+        admin_notified_at: nowIso,
+        customer_confirmed_at: null,
+      },
+    ]);
+
+    // Strict check: If Supabase insert fails, DO NOT proceed and return error
+    if (dbError) {
+      console.error("[SUPABASE DB INSERT ERROR]", dbError.message);
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Failed to save your order enquiry to the database: ${dbError.message}. Please try again or reach out on WhatsApp.`,
+        },
+        { status: 500 }
+      );
+    }
+
+    console.log(`[SUPABASE DB INSERT SUCCESS] Order ${orderId} saved via ${safeChannel}.`);
+
+    // 7. Create Admin Notification record in `notifications` table
+    try {
+      const channelLabel = safeChannel === "whatsapp" ? "WhatsApp" : safeChannel === "instagram" ? "Instagram" : "Email";
+      const { error: notifError } = await supabaseServer.from("notifications").insert([
+        {
+          title: "New Handmade Order Enquiry",
+          message: `${orderId} — ${cleanCustomerName} — ${cleanProductName} — ${channelLabel}`,
+          type: "order_enquiry",
+          reference_id: orderId,
+          is_read: false,
+        },
+      ]);
+      if (notifError) {
+        console.warn("[NOTIFICATION INSERT WARNING]", notifError.message);
       }
+    } catch (notifErr) {
+      console.warn("[NOTIFICATION INSERT EXCEPTION]", notifErr);
     }
 
     // 6. Resend Transactional Email Dispatches
@@ -387,36 +418,37 @@ export async function POST(request: Request) {
       }
     }
 
-    // 8. Generate WhatsApp & Instagram Deep Links
-    const whatsappSummary = generateWhatsAppOrderConfirmationMessage({
+    // 8. Generate WhatsApp, Instagram & Email Information
+    const whatsappMessage = generateWhatsAppOrderEnquiryMessage({
       orderId,
+      productName: cleanProductName,
+      productId: product_sku || product_id || "AT7-PIECE",
+      quantity,
       customerName: cleanCustomerName,
       customerPhone: cleanPhone,
       customerEmail: cleanEmail,
-      productName: cleanProductName,
-      quantity,
-      sizeOrVariant: cleanVariant,
-      customizationNote: cleanCustomization,
       deliveryCity: cleanCity,
-      productPhotoUrl: publicPhotoUrl,
-      trackingUrl,
+      customizationNote: cleanCustomization,
     });
 
     const whatsappUrl = generateWhatsAppUrl(
       initialSiteSettings.whatsapp_number,
-      whatsappSummary
+      whatsappMessage
     );
 
-    const instagramText = generateInstagramOrderDMText({
+    const emailData = generateEmailOrderEnquiryMessage({
       orderId,
+      productName: cleanProductName,
+      productId: product_sku || product_id || "AT7-PIECE",
+      quantity,
       customerName: cleanCustomerName,
       customerPhone: cleanPhone,
-      productName: cleanProductName,
-      quantity,
-      customizationNote: cleanCustomization,
+      customerEmail: cleanEmail,
       deliveryCity: cleanCity,
-      trackingUrl,
+      customizationNote: cleanCustomization,
     });
+
+    const mailtoUrl = `mailto:${initialSiteSettings.email_contact || "kashyapchaudhari299@gmail.com"}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
 
     // 9. Return structured success response
     return NextResponse.json({
@@ -428,7 +460,7 @@ export async function POST(request: Request) {
         customer_name: cleanCustomerName,
         customer_phone: cleanPhone,
         customer_email: cleanEmail,
-        preferred_channel,
+        preferred_channel: safeChannel,
         product_name: cleanProductName,
         product_photo_url: publicPhotoUrl,
         quantity,
@@ -440,14 +472,17 @@ export async function POST(request: Request) {
         admin_notified_at: adminEmailSent ? nowIso : null,
       },
       tracking_url: trackingUrl,
+      preferred_channel: safeChannel,
       whatsapp_url: whatsappUrl,
-      whatsapp_message: whatsappSummary,
-      instagram_text: instagramText,
-      instagram_url: initialSiteSettings.instagram_url,
+      whatsapp_message: whatsappMessage,
+      instagram_url: initialSiteSettings.instagram_url || "https://instagram.com/artbythread.7",
+      mailto_url: mailtoUrl,
+      email_subject: emailData.subject,
+      email_body: emailData.body,
       customer_email_sent: customerEmailSent,
       admin_email_sent: adminEmailSent,
-      db_saved: dbSuccess,
-      message: `Order #${orderId} logged successfully. Confirmation sent to ${cleanEmail}.`,
+      db_saved: true,
+      message: `Enquiry #${orderId} logged successfully.`,
     });
   } catch (error) {
     console.error("[ORDER API ROUTE ERROR]", error);

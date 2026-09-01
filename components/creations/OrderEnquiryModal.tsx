@@ -43,12 +43,16 @@ interface OrderEnquiryModalProps {
 interface OrderSuccessData {
   order_id: string;
   tracking_url: string;
-  whatsapp_url: string;
-  whatsapp_message: string;
-  instagram_text: string;
+  preferred_channel?: "whatsapp" | "instagram" | "email";
+  whatsapp_url?: string;
+  whatsapp_message?: string;
+  instagram_text?: string;
   instagram_url?: string;
-  customer_email_sent: boolean;
-  admin_email_sent: boolean;
+  mailto_url?: string;
+  email_subject?: string;
+  email_body?: string;
+  customer_email_sent?: boolean;
+  admin_email_sent?: boolean;
 }
 
 export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
@@ -174,13 +178,23 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
       setSuccessData({
         order_id: data.order_id,
         tracking_url: data.tracking_url,
+        preferred_channel: data.preferred_channel || values.preferred_channel,
         whatsapp_url: data.whatsapp_url,
         whatsapp_message: data.whatsapp_message,
-        instagram_text: data.instagram_text,
         instagram_url: data.instagram_url || settings.instagram_url,
+        mailto_url: data.mailto_url,
         customer_email_sent: data.customer_email_sent,
         admin_email_sent: data.admin_email_sent,
       });
+
+      // Copy Enquiry ID to clipboard for Instagram (Requirement 6)
+      if (values.preferred_channel === "instagram") {
+        try {
+          navigator.clipboard.writeText(data.order_id);
+        } catch {
+          // Safe clipboard fallback
+        }
+      }
 
       // Automatically launch the respective application (WhatsApp, Instagram, or Email)
       if (typeof window !== "undefined") {
@@ -189,20 +203,10 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
             if (values.preferred_channel === "whatsapp" && data.whatsapp_url) {
               window.open(data.whatsapp_url, "_blank", "noopener,noreferrer");
             } else if (values.preferred_channel === "instagram") {
-              if (data.instagram_text) {
-                try {
-                  navigator.clipboard.writeText(data.instagram_text);
-                } catch {}
-              }
               const igTarget = data.instagram_url || settings.instagram_url || "https://instagram.com/artbythread.7";
               window.open(igTarget, "_blank", "noopener,noreferrer");
-            } else if (values.preferred_channel === "email") {
-              const mailSubject = encodeURIComponent(`🧵 [Order #${data.order_id}] ${values.product_name}`);
-              const mailBody = encodeURIComponent(
-                `Hi ArtByThread.7 Studio,\n\nI have placed an order enquiry for "${values.product_name}" (Order #${data.order_id}).\n\nCustomer: ${values.customer_name}\nPhone: ${values.customer_phone || "—"}\nCity: ${values.delivery_city}\nCustomization: ${values.customization_note || "Standard Piece"}\n\nLooking forward to your response!`
-              );
-              const mailto = `mailto:${settings.email_contact || "kashyapchaudhari299@gmail.com"}?subject=${mailSubject}&body=${mailBody}`;
-              window.open(mailto, "_blank");
+            } else if (values.preferred_channel === "email" && data.mailto_url) {
+              window.open(data.mailto_url, "_blank");
             }
           } catch (err) {
             console.warn("[AUTO-LAUNCH APP EXCEPTION]", err);
@@ -255,8 +259,8 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
   };
 
   const handleCopyInstagramText = () => {
-    if (successData?.instagram_text) {
-      navigator.clipboard.writeText(successData.instagram_text);
+    if (successData?.order_id) {
+      navigator.clipboard.writeText(successData.order_id);
       setCopiedIg(true);
       setTimeout(() => setCopiedIg(false), 2500);
     }
@@ -366,7 +370,7 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* SUCCESS SCREEN VIEW */}
+            {/* SUCCESS SCREEN VIEW (Requirement 8) */}
             {/* ========================================================================= */}
             {successData ? (
               <motion.div
@@ -379,14 +383,14 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[11px] uppercase tracking-widest text-[#8C7D72] font-semibold">
-                    Enquiry Logged • Studio Notified
+                  <span className="text-xs uppercase tracking-widest text-[#5E7A68] font-bold">
+                    ✨ Enquiry Received!
                   </span>
                   <h4 className="font-serif text-2xl sm:text-3xl text-[#1F1D1B]">
-                    Order ID: <span className="text-[#C84B31] font-mono font-bold">{successData.order_id}</span>
+                    Enquiry ID: <span className="text-[#C84B31] font-mono font-bold">{successData.order_id}</span>
                   </h4>
                   <p className="text-xs sm:text-sm text-[#5C4F46] max-w-md mx-auto leading-relaxed">
-                    Thank you! A confirmation email with the product photo and your order details has been dispatched.
+                    Your handmade order enquiry has been saved successfully. We&apos;ll review availability and confirm your handcrafting timeline through your selected contact channel.
                   </p>
                 </div>
 
@@ -396,10 +400,10 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-xs font-semibold text-[#1F1D1B]">
                         <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                        <span>Send Pre-filled Order Summary to WhatsApp</span>
+                        <span>Confirm via WhatsApp</span>
                       </div>
                       <p className="text-[12px] text-[#5C4F46] leading-relaxed">
-                        Tap below to send your order summary directly to the studio WhatsApp. Our rich link preview automatically showcases your product photo in the chat!
+                        WhatsApp has been opened with your pre-filled enquiry details. If it did not open automatically, tap below:
                       </p>
                       <a
                         href={successData.whatsapp_url}
@@ -408,7 +412,7 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                         className="w-full py-3.5 px-6 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs sm:text-sm font-semibold tracking-wide shadow-md transition-all flex items-center justify-center gap-2"
                       >
                         <MessageCircle className="w-4 h-4 fill-white stroke-none" />
-                        <span>💬 Confirm via WhatsApp ({settings.whatsapp_number})</span>
+                        <span>💬 Open WhatsApp Chat ({settings.whatsapp_number})</span>
                       </a>
                     </div>
                   )}
@@ -417,31 +421,37 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-xs font-semibold text-[#1F1D1B]">
                         <InstagramIcon className="w-4 h-4 text-[#E4929A]" />
-                        <span>Message Us on Instagram DM</span>
+                        <span>Instagram DM Confirmation</span>
                       </div>
-                      <div className="p-3 bg-[#FFFDF9] rounded-xl border border-[#E8E0D5] font-mono text-[11px] text-[#3D342D] leading-relaxed">
-                        {successData.instagram_text}
+                      <div className="p-3.5 bg-[#FFFDF9] rounded-xl border border-[#E8E0D5] text-xs text-[#3D342D] leading-relaxed space-y-1">
+                        <p className="font-semibold text-[#1F1D1B]">Your enquiry has been saved successfully.</p>
+                        <p className="font-mono text-[#C84B31] font-bold">Enquiry ID: {successData.order_id}</p>
+                        <p className="text-[11px] text-[#5C4F46]">Please send this Enquiry ID in our Instagram DM so we can quickly find your enquiry.</p>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <button
                           type="button"
-                          onClick={handleCopyInstagramText}
+                          onClick={() => {
+                            navigator.clipboard.writeText(successData.order_id);
+                            setCopiedIg(true);
+                            setTimeout(() => setCopiedIg(false), 2500);
+                          }}
                           className="py-2.5 px-4 rounded-xl bg-[#FFFDF9] hover:bg-[#FAF7F2] text-[#1F1D1B] border border-[#E8E0D5] text-xs font-medium transition-colors flex items-center justify-center gap-2"
                         >
                           {copiedIg ? (
                             <>
                               <Check className="w-3.5 h-3.5 text-[#5E7A68]" />
-                              <span>Draft Copied!</span>
+                              <span>Enquiry ID Copied!</span>
                             </>
                           ) : (
                             <>
                               <Copy className="w-3.5 h-3.5 text-[#8C7D72]" />
-                              <span>Copy DM Draft</span>
+                              <span>Copy Enquiry ID</span>
                             </>
                           )}
                         </button>
                         <a
-                          href={successData.instagram_url || settings.instagram_url}
+                          href={successData.instagram_url || settings.instagram_url || "https://instagram.com/artbythread.7"}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="py-2.5 px-4 rounded-xl bg-[#1F1D1B] hover:bg-[#C84B31] text-white text-xs font-semibold transition-colors flex items-center justify-center gap-2 shadow-xs"
@@ -454,14 +464,23 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                   )}
 
                   {selectedChannel === "email" && (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-2 text-xs font-semibold text-[#1F1D1B]">
                         <Mail className="w-4 h-4 text-[#C84B31]" />
-                        <span>Email Confirmation Sent</span>
+                        <span>Email Application Launched</span>
                       </div>
                       <p className="text-[12px] text-[#5C4F46] leading-relaxed">
-                        We have sent your confirmation email with the order summary and product photo. Our studio owner will follow up directly via email with timing and manual payment details.
+                        Your default email client has been launched with your enquiry summary. Our studio owner will review availability and confirm your handcrafting timeline directly via email.
                       </p>
+                      {successData.mailto_url && (
+                        <a
+                          href={successData.mailto_url}
+                          className="w-full py-3 px-4 rounded-xl bg-[#FFFDF9] hover:bg-[#FAF7F2] text-[#1F1D1B] border border-[#E8E0D5] text-xs font-medium transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Mail className="w-3.5 h-3.5 text-[#C84B31]" />
+                          <span>Open Email Client Again ↗</span>
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>
@@ -730,7 +749,7 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                   </p>
                 </div>
 
-                {/* Submit Button */}
+                {/* Submit Button (Requirement 9 & 10) */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -739,13 +758,13 @@ export const OrderEnquiryModal: React.FC<OrderEnquiryModalProps> = ({
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      <span>Logging Your Order & Sending Confirmations...</span>
+                      <span>Submitting Enquiry...</span>
                     </span>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 text-[#E9C46A]" />
                       <span>
-                        Place Handmade Order via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "instagram" ? "Instagram" : "Email"} ({formatPrice(product.price)})
+                        Place Handmade Order Enquiry
                       </span>
                     </>
                   )}
