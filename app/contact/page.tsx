@@ -45,7 +45,7 @@ export default function ContactPage() {
           preferred_channel: "email",
           product_name: "General Studio Note / Message",
           customization_note: message,
-          admin_email: "kashyapchaudhari299@gmail.com",
+          admin_email: "henviparekh@gmail.com",
         }),
       });
     } catch (err) {

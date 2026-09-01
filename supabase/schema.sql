@@ -33,7 +33,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION auto_make_admin()
 RETURNS TRIGGER SECURITY DEFINER AS $$
 BEGIN
-  IF NEW.email = 'kashyapchaudhari299@gmail.com' THEN
+  IF NEW.email IN ('henviparekh@gmail.com', 'kashyapchaudhari299@gmail.com') THEN
     INSERT INTO public.admin_users (id, email)
     VALUES (NEW.id, NEW.email)
     ON CONFLICT (id) DO NOTHING;

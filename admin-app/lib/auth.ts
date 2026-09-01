@@ -39,7 +39,7 @@ export async function saveAdminSession(userId: string): Promise<void> {
     // Sync with Supabase Auth so that standard calls send the JWT token for RLS policies
     if (isSupabaseConfigured && supabase) {
       try {
-        const email = "kashyapchaudhari299@gmail.com";
+        const email = process.env.ADMIN_EMAIL || "henviparekh@gmail.com";
         const password = ADMIN_CREDENTIALS.password;
 
         // Try to sign in

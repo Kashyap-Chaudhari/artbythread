@@ -274,7 +274,7 @@ export async function POST(request: Request) {
 
     <div class="footer">
       ArtByThread.7 Studio • Handmade Thread Art, Embroidery & Gifts<br>
-      Shipping Across India • Questions? Reply to this email or WhatsApp +91 97731 94319
+      Shipping Across India • Questions? Reply to this email or WhatsApp +91 92650 47933
     </div>
   </div>
 </body>
@@ -451,7 +451,7 @@ export async function POST(request: Request) {
       customizationNote: cleanCustomization,
     });
 
-    const mailtoUrl = `mailto:${initialSiteSettings.email_contact || "kashyapchaudhari299@gmail.com"}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
+    const mailtoUrl = `mailto:${initialSiteSettings.email_contact || "henviparekh@gmail.com"}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
 
     // 9. Return structured success response
     return NextResponse.json({

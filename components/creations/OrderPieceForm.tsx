@@ -171,7 +171,7 @@ export const OrderPieceForm: React.FC<OrderPieceFormProps> = ({
               const mailBody = encodeURIComponent(
                 `Hi ArtByThread.7 Studio,\n\nI have placed an order enquiry for "${values.product_name}" (Order #${data.order_id}).\n\nCustomer: ${values.customer_name}\nPhone: ${values.customer_phone || "—"}\nCity: ${values.delivery_city}\nCustomization: ${values.customization_note || "Standard Piece"}\n\nLooking forward to your response!`
               );
-              const mailto = `mailto:${settings.email_contact || "kashyapchaudhari299@gmail.com"}?subject=${mailSubject}&body=${mailBody}`;
+              const mailto = `mailto:${settings.email_contact || "henviparekh@gmail.com"}?subject=${mailSubject}&body=${mailBody}`;
               window.open(mailto, "_blank");
             }
           } catch (err) {

@@ -372,7 +372,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customer_name: enquiryData.customer_name,
-          customer_phone: enquiryData.customer_phone || "+91 97731 94319",
+          customer_phone: enquiryData.customer_phone || "+91 92650 47933",
           customer_email: enquiryData.customer_email || "customer@example.com",
           preferred_channel: (enquiryData.preferred_channel || enquiryData.channel || "whatsapp").replace("_form", ""),
           quantity: enquiryData.quantity || 1,
